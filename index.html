@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuestionario para gerentes · Retail SA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
+<style id="css">
+:root{
+  --paper:#F6F7F5; --card:#FFFFFF; --ink:#1B2B30; --soft:#5A686C; --line:#DADFDC; --tint:#EEF1EE;
+  --acc:#17695A; --acc-soft:#DDF0EA; --blue:#2F6FB0; --blue-soft:#DCE9F6; --bad:#B4461D; --bad-soft:#FBE6DC; --amber:#B7700F; --amber-soft:#FBEBCD; --off:#8C979A; --off-soft:#ECEFEE;
+  --purple:#6B4FBB; --teal:#0E7C86; --pink:#B2367A; --olive:#7A6B2E;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#12181A; --card:#1A2326; --ink:#E6ECEA; --soft:#9AA7AA; --line:#2B3639; --tint:#1F292C;
+  --acc:#4CC3A6; --acc-soft:#173A33; --blue:#7FB4EA; --blue-soft:#1C3350; --bad:#F08A5D; --bad-soft:#3D2419; --amber:#F0B650; --amber-soft:#3D2E12; --off:#6D797C; --off-soft:#222C2F;
+  --purple:#B39DF5; --teal:#5FC4CC; --pink:#F08BC2; --olive:#CDBB6A;}}
+:root[data-theme="dark"]{
+  --paper:#12181A; --card:#1A2326; --ink:#E6ECEA; --soft:#9AA7AA; --line:#2B3639; --tint:#1F292C;
+  --acc:#4CC3A6; --acc-soft:#173A33; --blue:#7FB4EA; --blue-soft:#1C3350; --bad:#F08A5D; --bad-soft:#3D2419; --amber:#F0B650; --amber-soft:#3D2E12; --off:#6D797C; --off-soft:#222C2F;
+  --purple:#B39DF5; --teal:#5FC4CC; --pink:#F08BC2; --olive:#CDBB6A;}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.45}
+main{max-width:860px;margin:0 auto;padding:22px 16px 120px}
+h1{font-family:"Barlow Condensed","Barlow",system-ui,sans-serif;font-weight:600;font-size:34px;line-height:1.05;margin:0 0 4px}
+h2{font-size:22px;font-weight:600;margin:0 0 6px}
+h3{font-size:16px;font-weight:700;color:var(--acc);margin:18px 0 6px;text-transform:uppercase;letter-spacing:.03em}
+p{margin:0 0 10px}
+.soft{color:var(--soft)}
+.small{font-size:14px}
+.steps{display:flex;gap:5px;margin:14px 0 4px}
+.steps div{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps div.on{background:var(--acc)}
+.steplbl{font-size:14px;color:var(--soft);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 12px}
+.field{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.field:last-child{border-bottom:0}
+.lbl{font-weight:500}.hint{display:block;font-size:13px;color:var(--soft);font-weight:400}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--paper)}
+.seg button{font:inherit;font-size:15px;border:0;background:transparent;color:var(--soft);padding:7px 14px;border-radius:999px;cursor:pointer;min-width:52px}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--card)}
+.seg.no button[aria-pressed="true"]{background:var(--off);color:var(--card)}
+input[type=time],input[type=number],input[type=text],input[type=search],select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:42px;max-width:100%}
+input[type=number]{width:84px}
+select{max-width:100%}
+.hours{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dayrow{display:grid;grid-template-columns:96px auto 1fr;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.dayrow .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--soft)}
+.dayrow.off .h{visibility:hidden}
+@media (max-width:520px){.dayrow{grid-template-columns:1fr auto}.dayrow .h{grid-column:1 / -1}}
+button.btn{font:inherit;font-weight:600;font-size:16px;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid var(--acc);background:var(--acc);color:var(--card);min-height:46px}
+button.ghost{background:transparent;color:var(--acc)}
+button.btn.gray{background:transparent;color:var(--ink);border-color:var(--line)}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 8px}
+.sec.off{background:var(--off-soft);border-style:dashed}
+.sec.unif{background:var(--tint);margin:-2px 0 10px 18px}.sec.unif .field{border:0;padding:2px 0}
+.sec .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sec .name{font-weight:600}.sec .cnt{font-size:13px;color:var(--soft)}
+.sec .more{margin-top:8px;display:grid;gap:8px;font-size:15px;color:var(--soft)}
+.sec.off .more{display:none}
+.sec .more .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.otro{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.bar input[type=search]{flex:1;min-width:180px}
+.pill{font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--soft);white-space:nowrap}
+.pill.ok{background:var(--acc-soft);color:var(--acc)}.pill.pend{background:var(--amber-soft);color:var(--amber)}.pill.baja{background:var(--off-soft);color:var(--soft)}
+.person{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 8px}
+.person.baja{background:var(--off-soft)}
+.person.baja .who span:first-child{text-decoration:line-through;color:var(--soft)}
+.person .who{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.person .ref{font-size:13px;color:var(--soft);margin:2px 0 8px}
+.person .sel{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.person .sel label{display:flex;flex-direction:column;font-size:12px;color:var(--soft);gap:2px}
+.person.baja .sel,.person.baja .zona,.person.baja .obs{display:none}
+.zona{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.zona label{display:inline-flex;align-items:center;gap:6px;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:var(--paper);cursor:pointer}
+.zona label.on{border-color:var(--acc);background:var(--acc-soft)}
+.zona input{margin:0}
+.obs{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.obs input{flex:1;min-width:180px}
+.suclist{display:grid;gap:6px;max-height:60vh;overflow:auto;padding:2px}
+.suclist button{font:inherit;font-size:15px;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.suclist button:hover{border-color:var(--acc)}
+.sum td{padding:6px 0;border-bottom:1px solid var(--line)}.sum td:last-child{text-align:right;font-weight:600}.sum{width:100%;border-collapse:collapse}
+.flag{font-size:14px;color:var(--bad);background:var(--bad-soft);border-radius:8px;padding:8px 12px;margin:0 0 8px}
+.ok{font-size:14px;color:var(--acc);background:var(--acc-soft);border-radius:8px;padding:8px 12px;margin:0 0 8px}
+.msg{font-size:14px;color:var(--soft);min-height:1.2em}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.bottom .in{max-width:860px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bottom .save{font-size:13px;color:var(--soft);flex:1;text-align:center}
+.adds{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.adds input[type=text]{flex:1;min-width:150px}
+.export{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chk{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:17px;cursor:pointer}
+.chk:last-child{border-bottom:0}.chk input{width:24px;height:24px;accent-color:var(--acc);margin:0;flex:none}
+.lnk{font:inherit;font-size:13px;border:0;background:transparent;color:var(--blue);cursor:pointer;padding:2px 4px;text-decoration:underline}
+.who-r{display:flex;align-items:center;gap:8px}
+.person .ref{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--soft);margin:6px 0 8px}
+.person .ref .hint{margin-top:2px}
+.btn.small{padding:6px 12px;min-height:36px;font-size:14px}
+.odiv{font-weight:700;font-size:17px;color:var(--acc);margin:0 0 4px}
+.osec{padding:8px 0;border-top:1px solid var(--line)}.osec b{display:block;margin-bottom:4px}
+.oniv{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cj{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px}
+.cj.off{background:var(--off-soft);border-style:dashed}
+.cjtop{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.cjtop input{flex:1;min-width:160px}
+.cjin{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin-top:8px}
+.cjin label{display:flex;flex-direction:column;font-size:13px;color:var(--soft);gap:3px}.cjin label.wide{flex:1;min-width:220px}.cjin label .hint{display:inline}
+.cjin input[type=number]{width:96px}.cjin input[type=text]{width:100%}
+.cjcnt{font-size:14px;font-weight:600;color:var(--acc);padding-bottom:10px}
+.cjs{font-size:14px;border-radius:8px;padding:8px 12px;margin:10px 0 0}.warn0{background:var(--amber-soft);color:var(--ink)}.good0{background:var(--acc-soft);color:var(--ink)}
+.sec .chk{border-bottom:0;padding:6px 0}
+.sched{margin:2px 0 6px 36px}
+.sline{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.dchips{display:flex;flex-wrap:wrap;gap:5px}
+.dc{display:inline-flex;align-items:center;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:var(--paper);cursor:pointer;user-select:none}
+.dc input{position:absolute;opacity:0;width:0;height:0}.dc.on{background:var(--acc);border-color:var(--acc);color:var(--card);font-weight:600}
+.hh{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--soft)}
+.ib{font:inherit;font-size:16px;line-height:1;width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer}.ib.del{color:var(--bad)}
+main.wide{max-width:1320px}
+.ot-note{margin:12px 0 0;padding:10px 14px;border-left:4px solid var(--amber);background:var(--amber-soft);border-radius:0 10px 10px 0;font-size:14px;color:var(--ink)}
+.ot-wrap{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.ot{min-width:1000px;padding:18px 14px 20px;display:flex;flex-direction:column;align-items:center;--ln:#8A979B}
+.ot-root{background:var(--ink);color:var(--paper);font-weight:700;font-size:18px;padding:11px 26px;border-radius:12px;text-align:center}
+.ot-stem{width:2px;height:24px;background:var(--ln)}
+.ot-row{display:flex;justify-content:center;align-items:flex-start}
+.ot-col{position:relative;width:172px;flex:none;padding:24px 7px 0;display:flex;flex-direction:column}
+.ot-col::before{content:"";position:absolute;top:0;left:0;right:0;border-top:2px solid var(--ln)}
+.ot-col:first-child::before{left:50%}.ot-col:last-child::before{right:50%}
+.ot-col::after{content:"";position:absolute;top:0;left:50%;height:24px;border-left:2px solid var(--ln)}
+.ot-div{background:hsl(var(--h) 46% 34%);color:#fff;font-weight:700;font-size:15px;line-height:1.2;text-align:center;padding:10px 6px;border-radius:10px}
+.ot-kids{margin:0 0 0 12px;padding:10px 0 0 14px;border-left:2px solid hsl(var(--h) 38% 52%)}
+.ot-sec{position:relative;background:var(--paper);border:1.5px solid hsl(var(--h) 38% 52%);border-radius:9px;padding:7px 9px;margin:0 0 9px}
+.ot-sec:last-child{margin-bottom:0}
+.ot-sec::before{content:"";position:absolute;left:-14px;top:17px;width:14px;border-top:2px solid hsl(var(--h) 38% 52%)}
+.ot-sn{font-weight:700;font-size:14px;line-height:1.2}
+.ot-lv{margin-top:5px;padding-left:9px;border-left:3px solid hsl(var(--h) 40% 70%);font-size:12.5px;line-height:1.3}
+.ot-nm{display:block;font-weight:600}.ot-z{display:block;color:var(--soft);font-size:11.5px}
+.ot-top{position:relative;width:172px;display:flex;flex-direction:column;align-items:center}
+.ot-top>.ot-div{width:100%}
+.ot-chain{display:flex;flex-direction:column;align-items:center;width:100%}
+.ot-chain .ot-sec{width:100%;margin:0;text-align:center}
+.ot-chain .ot-sec::before{display:none}
+.ot-cs{width:2px;height:12px;background:hsl(var(--h) 38% 52%)}
+.ot-trunk{position:relative;width:2px;height:72px;background:var(--ln)}
+.ot-side{position:absolute;left:136px;top:17px;width:172px}
+.ot-side::before{content:"";position:absolute;left:-136px;top:19px;width:136px;border-top:2px dashed var(--ln)}
+.ot-side .ot-kids{margin-left:12px}
+.ot-nm,.ot-sn,.ot-div{overflow-wrap:anywhere}
+.ot-phys{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:14px;color:var(--soft)}.ot-phys b{color:var(--ink)}
+.ot-tag{background:var(--acc-soft);color:var(--ink);border:1px solid var(--acc);border-radius:999px;padding:3px 11px;font-size:13px;font-weight:600}
+@media print{@page{size:landscape;margin:10mm}.bottom,.noprint{display:none!important}main,main.wide{max-width:none;padding:0}.ot-wrap{overflow:visible;border:0}.ot{min-width:0;transform-origin:top left}}
+.palette{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.pal{font:inherit;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px 6px 9px;background:var(--paper);color:var(--ink);cursor:pointer;min-height:38px}
+.pal i{width:13px;height:13px;border-radius:50%;background:var(--c);flex:none}
+.pal.none i{background:transparent;border:2px solid var(--off)}
+.pal[aria-pressed="true"]{border-color:var(--c);background:var(--c);color:var(--card)}
+.pal[aria-pressed="true"] i{background:var(--card);border-color:var(--card)}
+.pal .x{font-weight:700;margin-left:2px;padding:0 5px;opacity:.75;cursor:pointer}
+.cgrid{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.addrow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end}
+.addrow label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--soft)}
+.addrow input[type=number]{width:86px}.addrow select{min-height:42px;min-width:150px}
+.addrow .btn{min-height:42px}
+.qty{display:inline-flex;align-items:center;gap:6px}
+.qty input[type=number]{width:74px;text-align:center;font-weight:700;font-size:18px}
+.qb{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--acc);background:var(--card);color:var(--acc);font-size:24px;font-weight:700;line-height:1;cursor:pointer;padding:0}
+.qb:disabled{opacity:.35;cursor:not-allowed}
+.clist{display:grid;gap:6px}
+.crow{display:grid;grid-template-columns:72px auto 1fr auto;align-items:center;gap:6px 8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+.crow.bad{border-color:var(--bad)}.crow.pend{border-color:var(--amber);background:var(--amber-soft)}
+.crow select:invalid,.crow select[value=""]{color:var(--soft)}
+.crow .cl{font-size:13px;color:var(--soft)}
+.crow input[type=number]{min-height:40px;padding:6px 8px;width:72px;font-weight:600}
+.crow select{min-height:40px;min-width:0;width:100%}
+.crow .dot{width:12px;height:12px;border-radius:50%;background:var(--c);display:inline-block}
+.crow .cerr{grid-column:1/-1;font-size:12.5px;color:var(--bad);font-weight:600}
+.cb.mini{width:42px;height:42px;cursor:default;border-radius:8px}.cb.mini.un{background:var(--paper);color:var(--soft);border:1.5px dashed var(--amber)}
+.rbox{background:var(--tint);border-radius:10px;padding:10px 12px;margin:6px 0 0}
+.small.bad{color:var(--bad);font-weight:600}
+.cx .x{cursor:pointer;padding:0 4px;color:var(--bad)}
+.cb{font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:46px;height:48px;border-radius:9px;cursor:pointer;border:1.5px solid var(--c);background:var(--c);color:var(--card);padding:0}
+.cb span{font-size:15px;font-weight:700;line-height:1}.cb small{font-size:9.5px;font-weight:600;line-height:1;opacity:.9;max-width:42px;overflow:hidden;white-space:nowrap}
+.cb.un{background:var(--paper);color:var(--soft);border:1.5px dashed var(--off)}
+.cb.no{background:var(--off-soft);color:var(--soft);border:1.5px solid var(--line)}.cb.no span{text-decoration:line-through}
+.csum{display:grid;gap:4px;font-size:14px;color:var(--soft);margin:0 0 6px}
+.cs i{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:middle}.cs b{color:var(--ink)}
+.cx{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.cx label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--soft)}.cx label .hint{display:inline}.cx input[type=text]{min-width:200px;color:var(--ink)}.cx .adds{display:flex;gap:6px;flex-wrap:wrap}
+details.more{margin-top:10px;font-size:14px;color:var(--soft)}details.more summary{cursor:pointer;color:var(--acc);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+</style>
+</head>
+<body>
+<main id="root"></main>
+<div class="bottom"><div class="in"><button class="btn ghost" id="back">Atrás</button><span class="save" id="save"></span><button class="btn" id="next">Siguiente</button></div></div>
+<script type="application/json" id="data">{"suc": ["ENCARNACION", "FERNANDO DE LA MORA", "HIPERSEIS", "LAMBARE", "LOS LAURELES", "MBURUCUYA", "PORTAL", "RETAIL - S6 ESPAÑA", "RETAIL S. A.  S6 CAMBACUA", "RETAIL S. A.  S6 LUQUE", "RETAIL S. A. - S6 ÑEMBY", "RETAIL S. A.  S6 PASEO LA GALERIA", "RETAIL S. A.  S6 VILLA MORRA", "RETAIL S. A. 3 DE FEBRERO S6 CDE", "RETAIL S. A. S6 - LAURELTY", "RETAIL S. A. S6 SAN BERNARDINO", "RETAIL S. A. S6 VILLETA", "RETAIL S.A - STOCK CARAPEGUA 1", "RETAIL S.A - STOCK CARAPEGUA 2", "RETAIL S.A. - S6 ENCARNACION 2", "RETAIL S.A. - S6 VILLA RICA", "RETAIL S.A. - STK ITAUGUA 2", "RETAIL S.A. - STK KM 8 ACARAY", "RETAIL S.A. - STOCK DE LA VICTORIA", "RETAIL S.A. - STOCK FERNANDO ZONA SUR", "RETAIL S.A. - STOCK GUARAMBARE", "RETAIL S.A. - STOCK MARTIN LEDESMA", "RETAIL S.A. - STOCK ORTIZ GUERRERO", "RETAIL S.A. - STOCK PERONI", "RETAIL S.A. - STOCK SANTANI", "RETAIL S.A. DENIS ROA", "RETAIL S.A. GRAN UNION", "RETAIL S.A. JAPON", "RETAIL S.A. MUNDIMARK", "RETAIL S.A. NEGRITA", "RETAIL S.A. S6 CAACUPE", "RETAIL S.A. S6 CLUB SIRIO", "RETAIL S.A. S6 MADERO", "RETAIL S.A. S6-AREGUA", "RETAIL S.A. STK BASILICA", "RETAIL S.A. STK CAACUPE 2", "RETAIL S.A. STK PALMA LOMA", "RETAIL S.A. STOCK - HERNANDARIAS", "RETAIL S.A. TOTAL", "RETAIL S6 - CDE SUPERCARRETERA", "RETAIL STOCK - ACCESO SUR", "RETAIL STOCK - ARTIGAS", "RETAIL STOCK - AVELINO MARTINEZ", "RETAIL STOCK - BARRIO OBRERO", "RETAIL STOCK - BRASILIA", "RETAIL STOCK - BRASILIA 2", "RETAIL STOCK - BRITEZ BORGES", "RETAIL STOCK - CAAGUAZU", "RETAIL STOCK - CAPIATA", "RETAIL STOCK - CAPIATA RUTA 2", "RETAIL STOCK - CIUDAD DEL ESTE (C.D.E.)", "RETAIL STOCK - CIUDAD NUEVA", "RETAIL STOCK - CNEL. OVIEDO", "RETAIL STOCK - CORONEL BOGADO", "RETAIL STOCK - DEFENSORES DEL CHACO", "RETAIL STOCK - DELIMARKET", "RETAIL STOCK - DON BOSCO", "RETAIL STOCK - DOÑA BERTA", "RETAIL STOCK - HIPER SAN LORENZO", "RETAIL STOCK - ITA", "RETAIL STOCK - ITAUGUA", "RETAIL STOCK - J. A. SALDIVAR", "RETAIL STOCK - J. AUGUSTO SALDIVAR 2", "RETAIL STOCK - LAMBARE", "RETAIL STOCK - LAMBARE CARRETERA LOPEZ", "RETAIL STOCK - LIMPIO", "RETAIL STOCK - LIMPIO 2", "RETAIL STOCK - MALL EXCELSIOR", "RETAIL STOCK - MARIANO ROQUE ALONSO 2", "RETAIL STOCK - MCAL LOPEZ", "RETAIL STOCK - MINGA GUAZU", "RETAIL STOCK - PARAGUARI", "RETAIL STOCK - PEDRO JUAN CABALLERO (P.J.C.)", "RETAIL STOCK - PTE. FRANCO", "RETAIL STOCK - RCA. ARGENTINA", "RETAIL STOCK - SACRAMENTO", "RETAIL STOCK - SAN ANTONIO", "RETAIL STOCK - SAN IGNACIO", "RETAIL STOCK - SAN LORENZO", "RETAIL STOCK - SHOPPING MARIANO ROQUE ALONSO", "RETAIL STOCK - STOCK BOQUERON", "RETAIL STOCK - STOCK CALLEI", "RETAIL STOCK - STOCK YPANE", "RETAIL STOCK - UNICOMPRA", "RETAIL STOCK - VILLA ELISA", "RETAIL STOCK - VILLA HAYES", "SAN LORENZO"], "n": {"ENCARNACION": 112, "FERNANDO DE LA MORA": 37, "HIPERSEIS": 147, "LAMBARE": 68, "LOS LAURELES": 117, "MBURUCUYA": 156, "PORTAL": 98, "RETAIL - S6 ESPAÑA": 98, "RETAIL S. A.  S6 CAMBACUA": 83, "RETAIL S. A.  S6 LUQUE": 73, "RETAIL S. A. - S6 ÑEMBY": 57, "RETAIL S. A.  S6 PASEO LA GALERIA": 60, "RETAIL S. A.  S6 VILLA MORRA": 64, "RETAIL S. A. 3 DE FEBRERO S6 CDE": 106, "RETAIL S. A. S6 - LAURELTY": 76, "RETAIL S. A. S6 SAN BERNARDINO": 74, "RETAIL S. A. S6 VILLETA": 70, "RETAIL S.A - STOCK CARAPEGUA 1": 21, "RETAIL S.A - STOCK CARAPEGUA 2": 21, "RETAIL S.A. - S6 ENCARNACION 2": 118, "RETAIL S.A. - S6 VILLA RICA": 52, "RETAIL S.A. - STK ITAUGUA 2": 24, "RETAIL S.A. - STK KM 8 ACARAY": 39, "RETAIL S.A. - STOCK DE LA VICTORIA": 38, "RETAIL S.A. - STOCK FERNANDO ZONA SUR": 52, "RETAIL S.A. - STOCK GUARAMBARE": 50, "RETAIL S.A. - STOCK MARTIN LEDESMA": 31, "RETAIL S.A. - STOCK ORTIZ GUERRERO": 51, "RETAIL S.A. - STOCK PERONI": 32, "RETAIL S.A. - STOCK SANTANI": 51, "RETAIL S.A. DENIS ROA": 121, "RETAIL S.A. GRAN UNION": 44, "RETAIL S.A. JAPON": 115, "RETAIL S.A. MUNDIMARK": 147, "RETAIL S.A. NEGRITA": 94, "RETAIL S.A. S6 CAACUPE": 81, "RETAIL S.A. S6 CLUB SIRIO": 23, "RETAIL S.A. S6 MADERO": 54, "RETAIL S.A. S6-AREGUA": 84, "RETAIL S.A. STK BASILICA": 47, "RETAIL S.A. STK CAACUPE 2": 35, "RETAIL S.A. STK PALMA LOMA": 45, "RETAIL S.A. STOCK - HERNANDARIAS": 56, "RETAIL S.A. TOTAL": 138, "RETAIL S6 - CDE SUPERCARRETERA": 96, "RETAIL STOCK - ACCESO SUR": 54, "RETAIL STOCK - ARTIGAS": 77, "RETAIL STOCK - AVELINO MARTINEZ": 32, "RETAIL STOCK - BARRIO OBRERO": 76, "RETAIL STOCK - BRASILIA": 42, "RETAIL STOCK - BRASILIA 2": 33, "RETAIL STOCK - BRITEZ BORGES": 65, "RETAIL STOCK - CAAGUAZU": 63, "RETAIL STOCK - CAPIATA": 53, "RETAIL STOCK - CAPIATA RUTA 2": 73, "RETAIL STOCK - CIUDAD DEL ESTE (C.D.E.)": 87, "RETAIL STOCK - CIUDAD NUEVA": 69, "RETAIL STOCK - CNEL. OVIEDO": 43, "RETAIL STOCK - CORONEL BOGADO": 37, "RETAIL STOCK - DEFENSORES DEL CHACO": 61, "RETAIL STOCK - DELIMARKET": 108, "RETAIL STOCK - DON BOSCO": 56, "RETAIL STOCK - DOÑA BERTA": 48, "RETAIL STOCK - HIPER SAN LORENZO": 50, "RETAIL STOCK - ITA": 99, "RETAIL STOCK - ITAUGUA": 76, "RETAIL STOCK - J. A. SALDIVAR": 51, "RETAIL STOCK - J. AUGUSTO SALDIVAR 2": 60, "RETAIL STOCK - LAMBARE": 29, "RETAIL STOCK - LAMBARE CARRETERA LOPEZ": 74, "RETAIL STOCK - LIMPIO": 54, "RETAIL STOCK - LIMPIO 2": 67, "RETAIL STOCK - MALL EXCELSIOR": 43, "RETAIL STOCK - MARIANO ROQUE ALONSO 2": 100, "RETAIL STOCK - MCAL LOPEZ": 48, "RETAIL STOCK - MINGA GUAZU": 56, "RETAIL STOCK - PARAGUARI": 38, "RETAIL STOCK - PEDRO JUAN CABALLERO (P.J.C.)": 56, "RETAIL STOCK - PTE. FRANCO": 68, "RETAIL STOCK - RCA. ARGENTINA": 60, "RETAIL STOCK - SACRAMENTO": 68, "RETAIL STOCK - SAN ANTONIO": 80, "RETAIL STOCK - SAN IGNACIO": 55, "RETAIL STOCK - SAN LORENZO": 60, "RETAIL STOCK - SHOPPING MARIANO ROQUE ALONSO": 56, "RETAIL STOCK - STOCK BOQUERON": 62, "RETAIL STOCK - STOCK CALLEI": 44, "RETAIL STOCK - STOCK YPANE": 58, "RETAIL STOCK - UNICOMPRA": 50, "RETAIL STOCK - VILLA ELISA": 82, "RETAIL STOCK - VILLA HAYES": 66, "SAN LORENZO": 113}, "pad": {}}</script>
+<script type="application/json" id="cfg">null</script>
+<script id="app">
+const HEAD="<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n<title>Cuestionario para gerentes · Retail SA</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n<link href=\"https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600&display=swap\" rel=\"stylesheet\">";
+const D=JSON.parse(document.getElementById("data").textContent);
+const DATA_SRC=document.getElementById("data").textContent,APP_SRC=document.getElementById("app").textContent,CSS_SRC=document.getElementById("css").textContent;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* ===== CONFIGURACIÓN: pegá acá la URL de la Web App de Apps Script ===== */
+const API_URL='https://script.google.com/macros/s/AKfycbwhaBr-AemXG4ZV07EnQIBTb_2vOAKDp7OjPofFYP6KJpEc6V2FfUGCdmtBHE0aEzHj/exec';
+/* ======================================================================== */
+const KEY=s=>"cuest-gerentes-v5:"+s;
+const ENVIO={email:"",whatsapp:""};
+const DESTINO=()=>[ENVIO.email?`<b>${esc(ENVIO.email)}</b>`:"",ENVIO.whatsapp?`WhatsApp <b>${esc(ENVIO.whatsapp)}</b>`:""].filter(Boolean).join(" o al ");
+const MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+
+/* ===== Lógica de puestos, copiada del Excel (Maestro y Listas) ===== */
+const DIV=["Gerencia","Apoyo","Administración","Ventas","E-commerce","Producción/Perecederos","Recepcion de mercaderia"];
+const SEC={"Gerencia":["Gerencia de Local","Subgerente"],"Apoyo":["Prevención"],"Administración":["Jefatura","Encargado","Auxiliar","Tesorería","Cajas"],"Ventas":["Jefatura","Reposición","Perfilista","Limpieza/Aseador"],"E-commerce":["E-commerce"],"Producción/Perecederos":["Jefatura","Panadería","Confitería","Cocina/Rotisería","Carnicería","Pollería","Verdulería/Frutería","Lacteos","Fiambrería/Queseria"],"Recepcion de mercaderia":["Depositero","Recepcionista","Codificacion"]};
+function NIV(d,s){
+  if(d==="Apoyo"&&s==="Prevención")return ["Encargado","Auxiliar"];
+  if(d==="Administración"&&s==="Jefatura")return ["Jefe Administrativo"];
+  if(d==="Administración"&&s==="Tesorería")return ["Encargado","Auxiliar"];
+  if(d==="Administración"&&s==="Cajas")return ["Supervisor","Cajero"];
+  if(d==="Ventas"&&s==="Jefatura")return ["Jefe de Sala"];
+  if(d==="Ventas"&&s==="Reposición")return ["Repositor"];
+  if(d==="E-commerce")return ["Pickeador/cajero","Delivery"];
+  if(d==="Producción/Perecederos"&&s==="Jefatura")return ["Jefe de Perecederos"];
+  if(s==="Panadería"||s==="Confitería"||s==="Carnicería")return ["Encargado de Sector","Operador/Atencion al cliente"];
+  if(s==="Verdulería/Frutería")return ["Encargado de Sector","Operador/Atencion al cliente","Repositor"];
+  if(s==="Cocina/Rotisería")return ["Encargado de Sector","Operador de Produccion"];
+  if(s==="Pollería"||s==="Fiambrería/Queseria")return ["Operador/Atencion al cliente"];
+  if(s==="Lacteos")return ["Encargado de Sector"];
+  if(s==="Depositero"||s==="Codificacion")return ["Encargado","Auxiliar"];
+  return ["N/A"];
+}
+function ZONA(n,s){if(n==="Cajero")return ["Sala","Mediterraneo","Rotiseria","E-commerce/Pick Up","Multizona"];if(n==="Repositor")return s==="Verdulería/Frutería"?null:["Secos","Lacteos","Multisectores"];if(s==="Cocina/Rotisería"&&n&&n!=="N/A")return ["Rotisería","Green Chef"];return null;}
+const PTC=["16","20","24","25","32"];
+function JOR(d,s,n){
+  if(d==="Apoyo"||(d==="Administración"&&s==="Cajas"&&n==="Cajero")||(d==="Ventas"&&s==="Limpieza/Aseador")||(d==="Ventas"&&s==="Reposición")||(d==="Ventas"&&s==="Perfilista")||d==="E-commerce"||(d==="Producción/Perecederos"&&s!=="Jefatura"))return ["FT","PT"];
+  return ["FT"];
+}
+/* ===== Sectores físicos del local ===== */
+const SECT=[
+ {n:"Mediterráneo",d:"Restaurante y cafetería con mesas, atendido por personal del local.",t:[{niv:"Cajero",zona:"Mediterraneo"}]},
+ {n:"Patio de comida",d:"Área con varios puestos de comida (pizza, lomitos, etc.) y mesas compartidas.",t:[]},
+ {n:"E-commerce",d:"Preparación de pedidos online y retiro en el local (Pick Up).",t:[{div:"E-commerce"},{niv:"Cajero",zona:"E-commerce/Pick Up"}]},
+ {n:"La Canasta",d:"",t:[]},
+ {n:"Parrillada",d:"",t:[]},
+ {n:"Green Chef",d:"Comidas saludables; espacio aparte de la rotisería, con personal propio.",t:[{sec:"Cocina/Rotisería",zona:"Green Chef"}]}
+];
+const UNIF_A="Mediterráneo",UNIF_B="Patio de comida";
+const unifOn=()=>S.sect[UNIF_A].on&&S.sect[UNIF_B].on;
+const CAJAS=[["linea","Línea de caja"],["medit","Mediterráneo"],["canasta","La Canasta"],["parrilla","Parrillada"],["sco","Self-checkout"]];
+const CCOL={linea:"var(--acc)",medit:"var(--blue)",canasta:"var(--amber)",parrilla:"var(--bad)",sco:"var(--purple)"},XCOL=["var(--teal)","var(--pink)","var(--olive)"];
+let resetAsk=false,addingType=false,qBackup=null,clearAsk=false,sendAsk=false;
+function numsOf(txt){const out=[];String(txt||"").split(/[,;]|\s+y\s+/).forEach(t=>{t=t.trim();if(!t)return;const m=t.match(/^(\d+)\s*(?:a|-|al|hasta)\s*(\d+)$/i);if(m){for(let i=+m[1];i<=+m[2]&&out.length<400;i++)out.push(i);}else if(/^\d+$/.test(t))out.push(+t);});return out;}
+const numOf=r=>{const n=parseInt(r.n,10);return n>0?n:null;};
+function cajaNums(){return [...new Set(S.local.cajas.map(numOf).filter(n=>n))].sort((a,b)=>a-b);}
+function cajaType(n){const r=S.local.cajas.find(r=>numOf(r)===n);return r?r.t:"";}
+function dupNums(){const seen={},d=new Set();S.local.cajas.forEach(r=>{const n=numOf(r);if(!n)return;if(seen[n])d.add(n);seen[n]=1;});return [...d].sort((a,b)=>a-b);}
+function cajaTypes(){return CAJAS.map(([k,n])=>({k,n,c:CCOL[k]})).concat((S.local.extras||[]).map((e,i)=>({k:"e"+i,n:(e.name||"").trim()||"Otro tipo",c:XCOL[i%XCOL.length]})));}
+function typeName(k){const t=cajaTypes().find(t=>t.k===k);return t?t.n:"";}
+function typeColor(k){const t=cajaTypes().find(t=>t.k===k);return t?t.c:"var(--off)";}
+function typeAbbr(k){return typeName(k).replace(/^(La|El|Los|Las)\s+/i,"").slice(0,3);}
+function rangesTxt(nums){nums=[...nums].sort((a,b)=>a-b);const out=[];let i=0;while(i<nums.length){let j=i;while(j+1<nums.length&&nums[j+1]===nums[j]+1)j++;out.push(j-i>=2?`${nums[i]} a ${nums[j]}`:nums.slice(i,j+1).join(", "));i=j+1;}return out.join(", ");}
+function cajaRows(){const nums=cajaNums();return cajaTypes().map(t=>{const ns=nums.filter(n=>cajaType(n)===t.k);return {key:t.k,name:t.n,nums:ns,q:ns.length,color:t.c};});}
+function cajasTotal(){return cajaNums().filter(n=>cajaType(n)!=="sco").length;}
+function scoCount(){return cajaNums().filter(n=>cajaType(n)==="sco").length;}
+const DAYCH=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom","Fer"];
+function schedTxt(sc){return sc.map(l=>`${l.days.map(i=>DAYCH[i]).join(", ")||"?"} ${l.d||"?"}-${l.h||"?"}`).join("; ");}
+function getSched(key){const [t,v]=key.split(":");return t==="s"?S.sect[v].sched:S.otros[+v].sched;}
+const LABELS=["Tu sucursal","Paso 1 de 3 · Apertura del local","Paso 2 de 3 · Sectores del local","Paso 3 de 3 · Personas","Revisá y enviá"];
+let ORG=false;
+
+/* ===== Estado ===== */
+function fresh(suc){const s={suc,step:1,local:{h24:false,ls:{d:"",h:""},df:{abre:"",d:"",h:""},cajas:[],extras:[]},sect:{},otros:[{n:"",sched:[]},{n:"",sched:[]},{n:"",sched:[]}],unifMP:"",people:{},added:[],savedAt:"",sentAt:""};
+  SECT.forEach(x=>s.sect[x.n]={on:false,sched:[]});return s;}
+let S=null,LOCKED=false;
+try{const e=JSON.parse(document.getElementById("cfg").textContent);if(e&&e.suc){S=e;LOCKED=!!e.locked;}}catch(x){}
+if(S){try{const l=JSON.parse(localStorage.getItem(KEY(S.suc))||"null");if(l&&(l.savedAt||"")>(S.savedAt||""))S=l;}catch(x){}}
+else{try{const last=localStorage.getItem("cuest-gerentes-v5:last");if(last){const l=JSON.parse(localStorage.getItem(KEY(last))||"null");if(l&&l.suc)S=l;}}catch(x){}}
+function dmerge(a,b){for(const k in b){const v=b[k];if(v&&typeof v==="object"&&!Array.isArray(v)&&a[k]&&typeof a[k]==="object"&&!Array.isArray(a[k]))dmerge(a[k],v);else a[k]=v;}return a;}
+function migrate(s){if(!s||!s.suc)return s;s=dmerge(fresh(s.suc),s);if(LOCKED)s.locked=true;
+  if(s.local.cajas&&!Array.isArray(s.local.cajas)&&!Object.keys(s.local.asig||{}).length){const a={};let mx=0;const put=(k,n)=>numsOf(n).forEach(x=>{a[x]=k;mx=Math.max(mx,x);});
+    CAJAS.forEach(([k])=>{const c=s.local.cajas[k];if(c&&c.t==="Sí")put(k,c.n);});(s.local.extras||[]).forEach((e,i)=>put("e"+i,e.n));
+    s.local.asig=a;delete s.local.cajas;delete s.local.cajasTotal;delete s.local.selfCheckout;}
+  if(s.local.asig){const ok=k=>/^(linea|medit|canasta|parrilla|sco|e\d+)$/.test(k||"");if(!Array.isArray(s.local.cajas)||!s.local.cajas.length)s.local.cajas=Object.keys(s.local.asig).map(Number).filter(n=>n>0&&ok(s.local.asig[n])).sort((a,b)=>a-b).map(n=>({n:String(n),t:s.local.asig[n]}));delete s.local.asig;}
+  if(!Array.isArray(s.local.cajas))s.local.cajas=[];delete s.local.maxCaja;delete s.local.extraNums;
+  Object.values(s.people||{}).forEach(p=>{if(p.div==="Administración"&&p.sec==="Limpieza/Aseador")p.div="Ventas";});
+  Object.values(s.people||{}).forEach(p=>{if(p.div==="Ventas"&&p.sec==="Reposición"&&p.niv==="Repositor"&&(p.zona||[]).includes("Verdulería / Frutería")){if(p.zona.length===1){p.div="Producción/Perecederos";p.sec="Verdulería/Frutería";p.zona=[];}else p.zona=p.zona.filter(z=>z!=="Verdulería / Frutería");p.acc=false;}});return s;}
+S=migrate(S);
+let sucFilter="",peopleFilter="",onlyPend=false,accAllBackup=null;
+function accCandidates(){return peopleOf().filter(p=>{if(p.added)return false;const x=P(p.ced);return !x.baja&&!x.div&&suggest(p.ref);});}
+function save(){if(!S)return;S.savedAt=new Date().toISOString();try{localStorage.setItem(KEY(S.suc),JSON.stringify(S));localStorage.setItem("cuest-gerentes-v5:last",S.suc);}catch(e){}programarNube();}
+function setSave(t){$("save").textContent=t;}
+
+/* ===== Personas ===== */
+function peopleOf(){const base=(D.pad[S.suc]||[]).map(p=>({ced:p[0],ver:p[4]||"",nombre:p[1],ref:(p[2]&&p[3])?p[2]+" - "+p[3]:(p[2]||p[3]),added:false}));
+  return base.concat(S.added.map(a=>({ced:a.ced,ver:a.ced,nombre:a.nombre,ref:"Agregado por el gerente",added:true})));}
+function P(ced){if(!S.people[ced])S.people[ced]={div:"",sec:"",niv:"",zona:[],jor:"",ptc:"",obs:"",baja:false,acc:false};return S.people[ced];}
+function estado(ced){const p=P(ced);if(p.baja)return "baja";if(!p.div||!p.sec||!p.niv||!p.jor)return "pend";if(p.jor==="PT"&&!p.ptc)return "pend";const z=ZONA(p.niv,p.sec);if(z&&!p.zona.length)return "pend";return "ok";}
+function suggest(ref){
+  const [secRaw,carRaw]=String(ref||"").split(" - ");const sec=(secRaw||"").toUpperCase().replace(/\s+/g," ").replace(/\.$/,"").trim(),car=(carRaw||"").toUpperCase().trim();
+  const has=(...ks)=>ks.some(k=>sec.includes(k));const enc=car.startsWith("ENCARGADO"),aux=car.startsWith("AUXILIAR")||car==="OPERADOR"||car==="OPERARIO";
+  const r={};const set=(d,s,n,z,j)=>{r.div=d;r.sec=s;if(n)r.niv=n;if(z)r.zona=z;if(j)r.jor=j;};
+  if(has("CAJAS")){if(car==="SUPERVISOR"||enc)set("Administración","Cajas","Supervisor");else if(car.startsWith("CAJERO"))set("Administración","Cajas","Cajero",null,car.includes("PART")?"PT":"FT");else set("Administración","Cajas");}
+  else if(has("GREEN CHEF")){set("Producción/Perecederos","Cocina/Rotisería",enc?"Encargado de Sector":"Operador de Produccion",["Green Chef"]);}
+  else if(has("COCINA","ROTISERIA")){set("Producción/Perecederos","Cocina/Rotisería",enc?"Encargado de Sector":"Operador de Produccion",["Rotisería"]);}
+  else if(has("CARNICERIA")){set("Producción/Perecederos","Carnicería",enc?"Encargado de Sector":"Operador/Atencion al cliente");}
+  else if(has("VERDULERIA")){if(enc)set("Producción/Perecederos","Verdulería/Frutería","Encargado de Sector");else if(car==="REPOSITOR")set("Producción/Perecederos","Verdulería/Frutería","Repositor");else set("Producción/Perecederos","Verdulería/Frutería","Operador/Atencion al cliente");}
+  else if(has("LACTEOS")){if(car==="REPOSITOR")set("Ventas","Reposición","Repositor",["Lacteos"]);else set("Producción/Perecederos","Lacteos","Encargado de Sector");}
+  else if(has("QUESERIA","FIAMBRERIA")){set("Producción/Perecederos","Fiambrería/Queseria","Operador/Atencion al cliente");}
+  else if(has("PANADERIA")){if(car==="CONFITERO")set("Producción/Perecederos","Confitería","Operador/Atencion al cliente");else set("Producción/Perecederos","Panadería",enc?"Encargado de Sector":"Operador/Atencion al cliente");}
+  else if(has("CONFITERIA")){set("Producción/Perecederos","Confitería",enc?"Encargado de Sector":"Operador/Atencion al cliente");}
+  else if(has("PREVENCION")){set("Apoyo","Prevención",enc?"Encargado":"Auxiliar");}
+  else if(has("LIMPIEZA","ASEO")||car==="ASEADOR"){set("Ventas","Limpieza/Aseador");}
+  else if(has("TESORERIA")){set("Administración","Tesorería",enc?"Encargado":"Auxiliar");}
+  else if(has("ADMINISTRACION")){if(car==="JEFE")set("Administración","Jefatura","Jefe Administrativo");else if(enc)set("Administración","Encargado");else set("Administración","Auxiliar");}
+  else if(has("RECEPCION")){set("Recepcion de mercaderia","Recepcionista");}
+  else if(has("DEPOSITO")){set("Recepcion de mercaderia","Depositero",enc?"Encargado":"Auxiliar");}
+  else if(has("GERENCIA")){set("Gerencia",car.includes("SUB")?"Subgerente":"Gerencia de Local");}
+  else if(has("GRAN CONSUMO","SALA")&&car==="JEFE"){set("Ventas","Jefatura","Jefe de Sala");}
+  else if(has("PERECEDEROS")&&car==="JEFE"){set("Producción/Perecederos","Jefatura","Jefe de Perecederos");}
+  else if(has("CARTELERIA","LETRISTA")||car==="PERFILISTA"||car==="LETRISTA"){set("Ventas","Perfilista");}
+  else if(has("PICK UP","E-COMERCE","ECOMMERCE","CHOFER")||car==="PICKEADOR"||car==="CHOFER"||car==="DELIVERY"){set("E-commerce","E-commerce",(car==="CHOFER"||car==="DELIVERY")?"Delivery":"Pickeador/cajero");}
+  else if(car==="REPOSITOR"){set("Ventas","Reposición","Repositor",has("ALMACEN")?["Secos"]:null);}
+  else if(car==="CAJERO"||car==="CAJERO PART TIME"){set("Administración","Cajas","Cajero",null,car.includes("PART")?"PT":"FT");}
+  if(!r.div)return null;const p={div:r.div,sec:r.sec||"",niv:r.niv||"",zona:r.zona||[],jor:r.jor||""};cascade(p);if(p.niv&&!p.jor)p.jor="FT";return p;}
+function sugTxt(s){return s?[s.div,s.sec,s.niv,s.zona&&s.zona.length?s.zona.join(" | "):"",s.jor].filter(Boolean).join(" › "):"";}
+function cascade(p){if(p.div&&!p.sec){const l=SEC[p.div]||[];if(l.length===1)p.sec=l[0];}
+  if(p.div&&p.sec&&!p.niv){const l=NIV(p.div,p.sec);if(l.length===1)p.niv=l[0];}
+  if(p.niv&&!p.jor){const l=JOR(p.div,p.sec,p.niv);if(l.length===1)p.jor=l[0];}
+  if(p.sec==="Cocina/Rotisería"&&p.niv&&!(p.zona||[]).length)p.zona=["Rotisería"];}
+function zonaTxt(p){const z=ZONA(p.niv,p.sec);return z?(p.zona.length?p.zona.join(" | "):""):(p.niv?"N/A":"");}
+function matches(p,c){if(p.baja)return false;if(c.div&&p.div!==c.div)return false;if(c.sec&&p.sec!==c.sec)return false;if(c.niv&&p.niv!==c.niv)return false;if(c.zona&&!(p.zona||[]).includes(c.zona))return false;return true;}
+function countSector(sx){if(!sx.t.length)return null;let n=0;Object.values(S.people).forEach(p=>{if(sx.t.some(c=>matches(p,c)))n++;});return n;}
+
+/* ===== Vistas ===== */
+function yn(id,val,three){return `<span class="seg ${val==="No"?'no':''}" data-yn="${id}"><button aria-pressed="${val==="Sí"}" data-v="Sí">Sí</button><button aria-pressed="${val==="No"}" data-v="No">No</button></span>`;}
+function vSuc(){
+  const q=sucFilter.trim().toUpperCase();const list=D.suc.filter(s=>!q||s.toUpperCase().includes(q));
+  return `<h2>¿Cuál es tu sucursal?</h2><p class="soft">Escribí una parte del nombre (por ejemplo AREGUA, LUQUE, MARIANO) y tocá tu sucursal.</p>
+  <div class="bar"><input type="search" id="sucq" value="${esc(sucFilter)}" placeholder="Buscar sucursal…" autocomplete="off"></div>
+  <div class="suclist">${list.map(s=>`<button data-suc="${esc(s)}">${esc(s)} <span class="soft small">· ${D.n[s]||0} personas</span>${badgeSuc(s)}</button>`).join("")||'<p class="soft">No hay sucursales con ese nombre.</p>'}</div>`;
+}
+function cajasDerivedHTML(){const nums=cajaNums(),tot=cajasTotal(),sco=scoCount(),blank=S.local.cajas.filter(r=>!r.t).length;if(!nums.length)return "";
+  const chips=nums.map(n=>{const t=cajaType(n);return `<span class="cb mini ${t?"":"un"}" style="--c:${typeColor(t)}" title="Caja ${n}: ${t?esc(typeName(t)):"sin tipo"}"><span>${n}</span><small>${t?esc(typeAbbr(t)):"?"}</small></span>`;}).join("");
+  const sum=cajaRows().filter(r=>r.q).map(r=>`<div class="cs"><i style="--c:${r.color}"></i><b>${esc(r.name)}</b> · ${r.q} ${r.q===1?"caja":"cajas"}: ${rangesTxt(r.nums)}</div>`).join("");
+  return `<div class="cgrid" style="margin-top:12px">${chips}</div><div class="csum">${sum}</div>
+    <p class="cjs ${blank?"warn0":"good0"}"><b>${tot} ${tot===1?"caja física":"cajas físicas"}</b>${sco?` + ${sco} self-checkout`:""} · números: ${rangesTxt(nums)}${blank?` · <b>${blank} sin tipo</b>`:""}</p>`;}
+function refreshCajas(){const box=$("cderiv");if(box)box.innerHTML=cajasDerivedHTML();const dups=new Set(dupNums());
+  document.querySelectorAll(".crow").forEach((row,i)=>{const r=S.local.cajas[i];if(!r)return;const n=numOf(r),bad=!n?"Falta el número":dups.has(n)?"Número repetido":"";row.className="crow "+(bad?"bad":(r.t?"":"pend"));let e=row.querySelector(".cerr");if(bad){if(!e){e=document.createElement("span");e.className="cerr";row.appendChild(e);}e.textContent=bad;}else if(e)e.remove();});}
+function cajasCard(){const L=S.local,list=L.cajas,types=cajaTypes(),dups=new Set(dupNums()),blank=list.filter(r=>!r.t).length;
+  const opts=cur=>`<option value="" ${cur?"":"selected"}>Todavía sin tipo de caja</option>`+types.map(t=>`<option value="${t.k}" ${cur===t.k?"selected":""}>${esc(t.n)}</option>`).join("");
+  const rows=list.map((r,i)=>{const n=numOf(r),bad=!n?"Falta el número":dups.has(n)?"Número repetido":"";
+    return `<div class="crow ${bad?"bad":(r.t?"":"pend")}"><input type="number" min="1" max="9999" value="${esc(r.n)}" data-cn="${i}" placeholder="Nº" aria-label="Número de caja"><i class="dot" style="--c:${r.t?typeColor(r.t):"transparent"}"></i><select data-ct="${i}" aria-label="Tipo de caja">${opts(r.t)}</select><button class="ib del" data-crm="${i}" aria-label="Quitar esta caja">×</button>${bad?`<span class="cerr">${bad}</span>`:""}</div>`;}).join("");
+  return `<h3>Cajas del local</h3>
+  <div class="card">
+    <p class="small" style="margin:0 0 12px">Necesitamos dos datos: <b>cuántas cajas</b> tiene el local y <b>qué número tiene cada una</b>, con su tipo (Línea de caja, Mediterráneo, Self-checkout, etc.). Primero poné la cantidad; después completá el número y el tipo de cada caja.</p>
+    <div class="field"><span class="lbl">¿Cuántas cajas tiene el local?<span class="hint">Contá todas, incluidas las de self-checkout</span></span><span class="qty"><button class="qb" data-qd="-1" aria-label="Una caja menos" ${list.length?"":"disabled"}>−</button><input type="number" inputmode="numeric" min="0" max="400" value="${list.length||""}" data-cq placeholder="0" aria-label="Cantidad de cajas"><button class="qb" data-qd="1" aria-label="Una caja más">+</button></span></div>
+    ${qBackup?`<p class="small soft" style="margin:6px 0 0">Se ${qBackup.rows.length===1?"quitó 1 caja":`quitaron ${qBackup.rows.length} cajas`} (nº ${qBackup.rows.map(r=>r.n||"?").join(", ")}). <button class="lnk" id="qundo">Deshacer</button></p>`:""}
+    ${list.length?`<p class="small soft" style="margin:12px 0 8px">Ahora completá cada caja: el <b>número</b> que tiene y de qué <b>tipo</b> es. No hace falta que sean seguidas ni del mismo tipo: puede ser la 1 Mediterráneo, la 2 Parrillada, la 3 Línea de caja, y así.</p>
+    <div class="clist">${rows}</div>
+    ${blank?`<p class="small" style="margin:8px 0 0"><button class="lnk" id="cfill">Poner «Línea de caja» en ${blank===1?"la que falta":`las ${blank} que faltan`}</button></p>`:""}
+    <div class="export" style="margin:10px 0 4px"><button class="btn ghost small" id="cadd1">Agregar una caja más</button></div>
+    <div id="cderiv">${cajasDerivedHTML()}</div>
+    ${clearAsk?`<p class="cjs warn0">¿Quitar las ${list.length} cajas cargadas y empezar de nuevo? <span class="adds" style="margin-top:6px"><button class="btn small" id="callclear-yes">Sí, quitar todas</button><button class="btn ghost small" id="callclear-no">No</button></span></p>`:`<p class="small"><button class="lnk" id="callclear">Quitar todas las cajas y empezar de nuevo</button></p>`}`:`<p class="small soft" style="margin:10px 0 0">Escribí la cantidad y después vas a completar el número y el tipo de cada una.</p>`}
+    <div class="cx">${addingType?`<label>Nombre del tipo de caja<span class="adds"><input type="text" id="xname" placeholder="Por ejemplo: Farmacia" maxlength="40"><button class="btn small" id="xok">Agregar</button><button class="btn ghost small" id="xcancel">Cancelar</button></span></label>`:`<button class="btn ghost small" id="xadd">Agregar otro tipo de caja</button>`}${L.extras.length?`<span class="small soft">Tipos propios: ${L.extras.map((e,i)=>`${esc((e.name||"").trim()||"Otro tipo")} <b class="x" data-xrm="${i}" title="Quitar este tipo" aria-label="Quitar ${esc(e.name||"")}">×</b>`).join(" · ")}</span>`:""}</div>
+  </div>`;}
+function vLocal(){const L=S.local;
+  return `<h2>Apertura del local</h2><p class="soft">Indicá el horario habitual. Esto se completa una sola vez.</p>
+  <div class="card">
+    <div class="field"><span class="lbl">¿Atiende las 24 horas?</span>${yn("h24",L.h24?"Sí":"No")}</div>
+    <div class="dayrow ${L.h24?'off':''}"><span class="lbl">Lunes a sábado</span><span></span><span class="h">de <input type="time" value="${esc(L.ls.d)}" data-t="ls.d" aria-label="Abre"> a <input type="time" value="${esc(L.ls.h)}" data-t="ls.h" aria-label="Cierra"></span></div>
+    <div class="dayrow ${L.df.abre==="No"||L.h24?'off':''}"><span class="lbl">Domingos y feriados<span class="hint">¿Abre?</span></span>${yn("df",L.df.abre)}<span class="h">de <input type="time" value="${esc(L.df.d)}" data-t="df.d" aria-label="Abre"> a <input type="time" value="${esc(L.df.h)}" data-t="df.h" aria-label="Cierra"></span></div>
+    <p class="small soft" style="margin:10px 0 0">${hoursTxt()}</p>
+  </div>
+  ${cajasCard()}`;
+}
+function hrs(d,h){if(!d||!h)return null;const [a,b]=[d,h].map(v=>{const [hh,mm]=v.split(":").map(Number);return hh+mm/60;});return ((b-a+24)%24)||24;}
+function hoursTxt(){const L=S.local;if(L.h24)return "Abierto las 24 horas: 168 horas por semana.";const a=hrs(L.ls.d,L.ls.h);if(a===null)return "Falta el horario de lunes a sábado.";let t=a*6;if(L.df.abre==="Sí"){const b=hrs(L.df.d,L.df.h);if(b===null)return "Falta el horario de domingos y feriados.";t+=b;}else if(L.df.abre!=="No")return "Falta indicar si abre domingos y feriados.";return `Horas abierto por semana: ${t.toFixed(1).replace(".0","")}`;}
+function schedBlock(key,sc){
+  if(!sc.length)return `<div class="sched small soft">Horario: igual que el local. <button class="lnk" data-sadd="${esc(key)}">Poner días y horario</button></div>`;
+  return `<div class="sched">${sc.map((l,i)=>`<div class="sline"><div class="dchips">${DAYCH.map((n,di)=>`<label class="dc ${l.days.includes(di)?'on':''}"><input type="checkbox" data-sday="${esc(key)}~${i}~${di}" ${l.days.includes(di)?'checked':''}>${n==="Fer"?"Feriados":n}</label>`).join("")}</div>
+   <div class="hh">de <input type="time" value="${esc(l.d)}" data-stm="${esc(key)}~${i}~d" aria-label="Abre"> a <input type="time" value="${esc(l.h)}" data-stm="${esc(key)}~${i}~h" aria-label="Cierra"><button class="ib del" data-sxrm="${esc(key)}~${i}" aria-label="Quitar este horario">×</button></div></div>`).join("")}
+   <button class="lnk" data-sadd="${esc(key)}">Agregar otro día u horario</button></div>`;}
+function vSect(){
+  return `<h2>Sectores de tu local</h2><p class="soft">Marcá los sectores que tiene tu local. En cada uno que marques, indicá los días y el horario en que atiende si es distinto al del local.</p>
+  ${SECT.map(x=>{const s=S.sect[x.n],n=countSector(x),uni=unifOn()&&S.unifMP==="Sí"&&x.n===UNIF_B;
+    const row=`<div class="sec"><label class="chk"><input type="checkbox" data-sx="${esc(x.n)}" ${s.on?'checked':''}><span>${esc(x.n)}${x.d?`<span class="hint">${esc(x.d)}</span>`:''}${n!==null&&Object.keys(S.people).length?`<span class="hint">${n} ${n===1?'persona asignada':'personas asignadas'}</span>`:''}</span></label>${s.on?(uni?`<div class="sched small soft">Horario: el mismo que Mediterráneo.</div>`:schedBlock("s:"+x.n,s.sched)):''}</div>`;
+    const q=x.n===UNIF_B&&unifOn()?`<div class="sec unif"><div class="field"><span class="lbl">Mediterráneo y Patio de comida: ¿funcionan como un solo espacio?<span class="hint">Están juntos, con el mismo personal y el mismo horario</span></span>${yn("unif",S.unifMP)}</div></div>`:'';
+    return row+q;}).join("")}
+  <h3>¿Tiene otro sector?</h3>
+  ${S.otros.map((o,i)=>`<div class="sec"><input type="text" value="${esc(o.n)}" data-on="${i}" placeholder="Nombre del sector" maxlength="60">${o.n?schedBlock("o:"+i,o.sched):''}</div>`).join("")}
+  <button class="btn ghost small" id="oadd">Agregar otro sector</button>`;
+}
+function vPeople(){
+  const all=peopleOf(),q=peopleFilter.trim().toLowerCase();
+  const list=all.filter(p=>(!q||p.nombre.toLowerCase().includes(q)||(p.ver||"").includes(q))&&(!onlyPend||estado(p.ced)==="pend"));
+  const cnt={ok:0,pend:0,baja:0};all.forEach(p=>cnt[estado(p.ced)]++);
+  const pcard=p=>{const x=P(p.ced),st=estado(p.ced),z=ZONA(x.niv,x.sec);
+    const opt=(arr,cur)=>`<option value="">Elegí…</option>`+arr.map(v=>`<option ${cur===v?'selected':''}>${esc(v)}</option>`).join("");
+    const sg=p.added?null:suggest(p.ref);
+    return `<div class="person ${x.baja?'baja':''}" data-pc="${p.ced}"><div class="who"><span><b>${esc(p.nombre)}</b> <span class="soft small">· CI ${esc(p.ver||p.ced)}</span></span><span class="who-r"><span class="pill ${st}">${st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá"}</span><button class="lnk" data-baja="${p.ced}">${x.baja?'Deshacer':'Ya no trabaja acá'}</button></span></div>
+    <div class="ref"><span>Hoy figura como: <b>${esc(p.ref)}</b>${x.baja?'<span class="hint">Marcada como baja: no hace falta completar nada más.</span>':st==="ok"?'':sg?`<span class="hint">Se clasificaría como: ${esc(sugTxt(sg))}</span>`:(p.added?'':'<span class="hint">No hay clasificación sugerida: elegila abajo</span>')}${!x.baja&&st!=="ok"&&x.acc?'<span class="hint">Sugerencia aplicada: completá lo que falta abajo</span>':''}</span>
+      ${p.added?'<button class="btn ghost small" data-rmadd="'+p.ced+'">Quitar</button>':''}${x.baja?'<span class="pill baja">Baja confirmada ✓</span>':st==="ok"?`<span class="pill ok">${x.acc?"Aceptado ✓":"Completo ✓"}</span>`:(sg&&!x.acc&&!p.added?`<button class="btn small" data-acc="${p.ced}">Aceptar</button>`:'')}</div>
+    <div class="sel">
+      <label>División<select data-f="div" data-ced="${p.ced}">${opt(DIV,x.div)}</select></label>
+      <label>Sección / Puesto<select data-f="sec" data-ced="${p.ced}" ${x.div?'':'disabled'}>${opt(SEC[x.div]||[],x.sec)}</select></label>
+      <label>Nivel / Especialidad<select data-f="niv" data-ced="${p.ced}" ${x.sec?'':'disabled'}>${opt(x.sec?NIV(x.div,x.sec):[],x.niv)}</select></label>
+      <label>Jornada<select data-f="jor" data-ced="${p.ced}" ${x.niv?'':'disabled'}>${opt(x.niv?JOR(x.div,x.sec,x.niv):[],x.jor)}</select></label>
+      ${x.jor==="PT"?`<label style="${x.ptc?"":"color:var(--bad);font-weight:600"}">Contrato PT${x.ptc?"":" · falta elegir"}<select data-f="ptc" data-ced="${p.ced}">${`<option value="">Elegí…</option>`+PTC.map(v=>`<option value="${v}" ${x.ptc===v?"selected":""}>${v} horas</option>`).join("")}</select></label>`:""}
+    </div>
+    ${z?`<div class="zona"><span class="small ${x.zona.length?"soft":""}" style="width:100%;${x.zona.length?"":"color:var(--bad)"}">Zona / Sector: ${x.zona.length?"podés marcar más de uno":"falta elegir al menos una"}</span>${z.map(v=>`<label class="${x.zona.includes(v)?'on':''}"><input type="checkbox" data-z="${esc(v)}" data-ced="${p.ced}" ${x.zona.includes(v)?'checked':''}>${esc(v)}</label>`).join("")}</div>`:''}
+    <div class="obs"><input type="text" value="${esc(x.obs)}" data-obs="${p.ced}" placeholder="Observaciones (opcional)" maxlength="200"></div></div>`;};
+  return `<h2>Personas por sector</h2><p class="soft">Esta es la lista de RRHH de tu sucursal. Si la clasificación sugerida está bien, tocá <b>Aceptar</b> (o aceptá todas juntas); si no, corregila abajo. Cuando completás todos los campos a mano, la persona queda <b>Completa</b> sola, sin tocar Aceptar. Marcá quién ya no trabaja acá y agregá a quien falte.</p>
+  ${(()=>{const n=accCandidates().length;return n||accAllBackup?`<div class="card" style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between">${n?`<span class="small">Hay <b>${n}</b> ${n===1?"persona":"personas"} con clasificación sugerida sin tocar. Primero marcá las bajas y después aceptá todas de una vez.</span><button class="btn small" id="accall">Aceptar ${n===1?"la sugerencia":`las ${n} sugerencias`}</button>`:""}${accAllBackup?`<span class="small soft">Se aceptaron ${accAllBackup.length} sugerencias. <button class="lnk" id="accundo">Deshacer</button></span>`:""}</div>`:"";})()}
+  <div class="bar"><span class="pill">${all.length} personas</span><span class="pill ok">${cnt.ok} completas</span><span class="pill pend">${cnt.pend} pendientes</span>${cnt.baja?`<span class="pill baja">${cnt.baja} bajas</span>`:''}</div>
+  <div class="bar"><input type="search" id="pq" value="${esc(peopleFilter)}" placeholder="Buscar por nombre…" autocomplete="off"><button class="btn gray" id="pend" aria-pressed="${onlyPend}">${onlyPend?'Ver todas':'Solo pendientes'}</button></div>
+  ${list.map(pcard).join("")||'<p class="soft">No hay personas con ese filtro.</p>'}
+  <div class="card"><span class="lbl">¿Falta alguien?</span><div class="adds" style="margin-top:6px"><input type="text" id="nced" placeholder="Cédula" inputmode="numeric" style="width:130px"><input type="text" id="nnom" placeholder="Apellido y nombre"><button class="btn ghost" id="addp">Agregar</button></div><p class="msg" id="perr"></p></div>`;
+}
+function issues(){
+  const out=[],all=peopleOf();const pend=all.filter(p=>estado(p.ced)==="pend").length;
+  {const np=all.filter(p=>{const x=P(p.ced);return !x.baja&&x.jor==="PT"&&!x.ptc;}).length;if(np)out.push(`${np} ${np===1?"persona PT sin":"personas PT sin"} tipo de contrato (16, 20, 24, 25 o 32 horas) (paso 3)`);}
+  if(pend)out.push(`${pend} ${pend===1?'persona pendiente':'personas pendientes'} de clasificar (paso 3)`);
+  SECT.filter(x=>!S.sect[x.n].on&&(countSector(x)||0)>0).forEach(x=>out.push(`No marcaste "${x.n}" como sector del local, pero hay ${countSector(x)} ${countSector(x)===1?'persona asignada':'personas asignadas'} ahí (paso 2 o 3)`));
+  SECT.filter(x=>S.sect[x.n].on&&x.t.length&&countSector(x)===0).forEach(x=>out.push(`Marcaste "${x.n}" pero no hay personas asignadas ahí (paso 3)`));
+  if(unifOn()&&!S.unifMP)out.push("Indicá si Mediterráneo y Patio de comida funcionan como un solo espacio (paso 2)");
+  const bad=[];SECT.filter(x=>S.sect[x.n].on&&!(unifOn()&&S.unifMP==="Sí"&&x.n===UNIF_B)).forEach(x=>S.sect[x.n].sched.forEach(l=>{if(!l.days.length||!l.d||!l.h)bad.push(x.n);}));S.otros.filter(o=>o.n).forEach(o=>o.sched.forEach(l=>{if(!l.days.length||!l.d||!l.h)bad.push(o.n);}));
+  [...new Set(bad)].forEach(n=>out.push(`Completá los días y el horario de "${n}" (paso 2)`));
+  const ht=hoursTxt();if(!ht.startsWith("Horas")&&!ht.startsWith("Abierto"))out.push(ht+" (paso 1)");
+  if(!cajaNums().length)out.push("Falta cargar las cajas del local (paso 1)");
+  const noNum=S.local.cajas.filter(r=>!numOf(r)).length;if(noNum)out.push(`Hay ${noNum} ${noNum===1?"caja sin número":"cajas sin número"} (paso 1)`);
+  const dps=dupNums();if(dps.length)out.push(`Números de caja repetidos: ${dps.join(", ")} (paso 1)`);
+  const noT=S.local.cajas.filter(r=>numOf(r)&&!r.t).length;if(noT)out.push(`Hay ${noT} ${noT===1?"caja sin tipo":"cajas sin tipo"}: elegí si es Línea de caja, Mediterráneo, etc. (paso 1)`);
+  return out;
+}
+function vReview(){const all=peopleOf(),cnt={ok:0,pend:0,baja:0};all.forEach(p=>cnt[estado(p.ced)]++);const is=issues();
+  return `<h2>Revisá y enviá</h2>
+  ${is.length?is.map(x=>`<p class="flag">${esc(x)}</p>`).join("")+'<p class="soft small">Podés enviar igual, pero conviene resolver estos puntos.</p>':'<p class="ok">Todo completo. Tocá Enviar respuestas.</p>'}
+  <div class="card"><table class="sum"><tr><td>Sucursal</td><td>${esc(S.suc)}</td></tr><tr><td>Sectores del local</td><td>${SECT.filter(x=>S.sect[x.n].on).length+S.otros.filter(o=>o.n).length}</td></tr><tr><td>Cajas físicas</td><td>${cajaNums().length?cajasTotal():"–"}</td></tr><tr><td>Cajas self-checkout</td><td>${cajaNums().length?scoCount():"–"}</td></tr><tr><td>Personas completas</td><td>${cnt.ok}</td></tr><tr><td>Pendientes</td><td>${cnt.pend}</td></tr><tr><td>Ya no trabajan acá</td><td>${cnt.baja}</td></tr><tr><td>Agregadas</td><td>${S.added.length}</td></tr></table></div>
+  <div class="card"><b>Enviar respuestas</b>
+  <p class="small soft" style="margin:4px 0 10px">Tocá <b>Enviar</b> y tus respuestas quedan registradas. Si después corregís algo, podés volver a enviar: vale el último envío.</p>
+  ${sendAsk?`<p class="cjs warn0">Hay ${issues().length} ${issues().length===1?"punto":"puntos"} sin resolver (mirá la lista de arriba). ¿Enviar igual? <span class="adds" style="margin-top:6px"><button class="btn small" id="send-yes">Sí, enviar igual</button><button class="btn ghost small" id="send-no">Primero reviso</button></span></p>`:`<div class="export"><button class="btn" id="send">Enviar respuestas</button>${S.sentAt?`<span class="small soft">✅ Enviado el ${fmtDate(S.sentAt)}. Si corregiste algo, enviá de nuevo.</span>`:''}</div>`}
+  <p class="msg" id="xmsg"></p>
+  <details class="more"><summary>Más opciones</summary><div class="export" style="margin-top:8px"><button class="btn ghost small" id="dlj">Descargar archivo de respuestas</button><button class="btn ghost small" id="dlx">Descargar en Excel</button><button class="btn ghost small" id="dlc">Guardar copia con mis respuestas</button></div></details></div>`;
+}
+const DH={"Gerencia":215,"Apoyo":28,"Administración":150,"Ventas":275,"E-commerce":190,"Producción/Perecederos":8,"Recepcion de mercaderia":45};
+const wrapTxt=t=>esc(t).replace(/\//g,"/\u200b");
+function orgSec(d,s){const n=NIV(d,s).filter(x=>x!=="N/A");
+  return `<div class="ot-sec"><div class="ot-sn">${wrapTxt(s)}</div>${n.map(x=>{const z=ZONA(x,s);return `<div class="ot-lv"><span class="ot-nm">${wrapTxt(x)}</span>${z?`<span class="ot-z">${z.map(wrapTxt).join(" · ")}</span>`:''}</div>`;}).join("")}</div>`;}
+function vOrg(){
+  const OPS=DIV.filter(d=>d!=="Gerencia"&&d!=="Apoyo");
+  const apoyo=`<div class="ot-side" style="--h:${DH["Apoyo"]}"><div class="ot-div">Apoyo</div><div class="ot-kids">${SEC["Apoyo"].map(s=>orgSec("Apoyo",s)).join("")}</div></div>`;
+  const gerencia=`<div class="ot-top" style="--h:${DH["Gerencia"]}"><div class="ot-div">Gerencia</div><div class="ot-chain">${SEC["Gerencia"].map(s=>'<div class="ot-cs"></div>'+orgSec("Gerencia",s)).join("")}</div></div>`;
+  const cols=OPS.map(d=>`<div class="ot-col" style="--h:${DH[d]}"><div class="ot-div">${wrapTxt(d)}</div><div class="ot-kids">${SEC[d].map(s=>orgSec(d,s)).join("")}</div></div>`).join("");
+  return `<div class="noprint" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between"><div><h2>Organigrama de puestos</h2><p class="soft" style="margin:0">Es la estructura a la que responden las preguntas del paso 3: cada persona se ubica en una división, una sección, un nivel y, si corresponde, una zona.</p></div><span class="adds"><button class="btn ghost small" id="orgprint">Imprimir</button><button class="btn small" id="orgback">Volver al cuestionario</button></span></div>
+  <p class="ot-note"><b>Importante:</b> este organigrama no es necesariamente jerárquico. Es una herramienta para entender los cargos y poder completar el cuestionario; no define quién reporta a quién en tu local.</p>
+  <div class="ot-wrap"><div class="ot"><div class="ot-root">${S?esc(S.suc):"Sucursal"}</div><div class="ot-trunk">${apoyo}</div>${gerencia}<div class="ot-stem"></div><div class="ot-row">${cols}</div></div></div>
+  <div class="ot-phys"><b>Sectores del local</b><span>que marca el gerente en el paso 2:</span>${SECT.map(x=>`<span class="ot-tag">${esc(x.n)}</span>`).join("")}</div>`;
+}
+function render(){
+  const st=S?S.step:0;
+  [...$("root").parentNode.querySelectorAll(".steps div")].forEach((d,i)=>d.className=i<=st?"on":"");
+  $("root").className=ORG?"wide":"";
+  $("root").innerHTML=`<h1>Confirmá tu local</h1><p class="soft small">${S?esc(S.suc)+(S.locked?'':' · <button class="lnk" id="chg">Cambiar sucursal</button>'):'Retail SA · Cuestionario para gerentes'} · <button class="lnk" id="orgb">${ORG?'Cerrar organigrama':'Ver organigrama'}</button></p>
+  ${S&&S.sentAt&&!ORG?`<p class="cjs good0" style="margin:0 0 12px">✅ Ya enviaste este cuestionario el <b>${fmtDate(S.sentAt)}</b>. Podés revisarlo o corregirlo y volver a enviar: vale el último envío.</p>`:""}
+  <div class="steps">${[0,1,2,3,4].map(i=>`<div class="${i<=st?'on':''}"></div>`).join("")}</div><p class="steplbl">${LABELS[st]}</p>
+  ${S&&!ORG?(resetAsk?`<div class="cjs warn0" style="margin:0 0 14px"><b>¿Borrar todo y empezar de nuevo?</b> Se borran todas las respuestas de ${esc(S.suc)}: horario, cajas, sectores y la clasificación de cada persona. No se puede deshacer.<span class="adds" style="margin-top:8px"><button class="btn small" id="rst-yes" style="background:var(--bad);border-color:var(--bad)">Sí, borrar todo</button><button class="btn ghost small" id="rst-no">No, volver</button></span></div>`:`<p class="small" style="margin:-8px 0 14px;text-align:right"><button class="lnk" id="rst" style="color:var(--bad)">Borrar selección y empezar nuevamente</button></p>`):""}
+  <div id="view">${ORG?vOrg():(!S?vSuc():[null,vLocal,vSect,vPeople,vReview][st]())}</div>`;
+  $("back").style.visibility=(!S||st===1||ORG)?"hidden":"visible";
+  $("next").style.display=(!S||st===4||ORG)?"none":"";
+  bind();
+}
+function bind(){
+  const ob=$("orgb");if(ob)ob.onclick=()=>{ORG=!ORG;render();window.scrollTo(0,0);};const obk=$("orgback");if(obk)obk.onclick=()=>{ORG=false;render();window.scrollTo(0,0);};const opr=$("orgprint");if(opr)opr.onclick=()=>window.print();
+  if(ORG)return;
+  const rs=$("rst");if(rs)rs.onclick=()=>{resetAsk=true;render();window.scrollTo(0,0);};
+  const rn=$("rst-no");if(rn)rn.onclick=()=>{resetAsk=false;render();};
+  const ry=$("rst-yes");if(ry)ry.onclick=()=>{const suc=S.suc,lk=S.locked;S=fresh(suc);if(lk)S.locked=true;resetAsk=false;accAllBackup=null;qBackup=null;clearAsk=false;sendAsk=false;addingType=false;peopleFilter="";onlyPend=false;save();render();window.scrollTo(0,0);setSave("Se borró todo. Empezaste de nuevo.");};
+  const chg=$("chg");if(chg)chg.onclick=()=>{save();S=null;render();window.scrollTo(0,0);};
+  const sq=$("sucq");if(sq){sq.oninput=()=>{sucFilter=sq.value;const pos=sq.selectionStart;render();const n=$("sucq");n.focus();n.setSelectionRange(pos,pos);};document.querySelectorAll("[data-suc]").forEach(b=>b.onclick=()=>abrirSucursal(b.dataset.suc));return;}
+  const keep=()=>{const y=window.scrollY;save();render();window.scrollTo(0,y);};
+  document.querySelectorAll("[data-yn]").forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{const [k,id]=g.dataset.yn.split("|"),v=b.dataset.v;
+    if(k==="h24")S.local.h24=v==="Sí";else if(k==="df")S.local.df.abre=v;else if(k==="loc")S.local[id]=v;else if(k==="unif")S.unifMP=v;keep();}));
+  document.querySelectorAll("[data-t]").forEach(i=>i.onchange=()=>{const [a,b]=i.dataset.t.split(".");S.local[a][b]=i.value;keep();});
+  const nextNum=()=>{const nums=cajaNums();return nums.length?nums[nums.length-1]+1:1;};
+  const addCaja=()=>{S.local.cajas.push({n:String(nextNum()),t:""});keep();const s=document.querySelector(`[data-ct="${S.local.cajas.length-1}"]`);if(s)s.focus();};
+  const applyQty=v=>{v=Math.min(400,Math.max(0,v||0));const len=S.local.cajas.length;if(v===len)return false;
+    if(v<len){const removed=S.local.cajas.slice(v);S.local.cajas.length=v;qBackup={rows:(qBackup&&qBackup.base===v)?removed.concat(qBackup.rows):removed,base:v};if(!qBackup.rows.some(r=>r.t||r.n))qBackup=null;}
+    else{for(let i=len;i<v;i++){const back=qBackup&&!qBackup.fresh&&i>=qBackup.base?qBackup.rows[i-qBackup.base]:null;S.local.cajas.push(back?{n:back.n,t:back.t}:{n:String(nextNum()),t:""});}
+      if(qBackup&&(qBackup.fresh||v-qBackup.base>=qBackup.rows.length))qBackup=null;}
+    return true;};
+  const qu=$("qundo");if(qu)qu.onclick=()=>{if(!qBackup)return;S.local.cajas.length=Math.min(S.local.cajas.length,qBackup.base);S.local.cajas.push(...qBackup.rows.map(r=>({n:r.n,t:r.t})));qBackup=null;keep();};
+  const cq=document.querySelector("[data-cq]");if(cq){let qt=null;
+    cq.oninput=()=>{clearTimeout(qt);qt=setTimeout(()=>{const v=parseInt(cq.value,10);if(isNaN(v)||!document.body.contains(cq))return;if(applyQty(v)){keep();const n=document.querySelector("[data-cq]");if(n){n.focus();const cur=n.value;n.value="";n.value=cur;}}},600);};
+    cq.onchange=()=>{clearTimeout(qt);applyQty(parseInt(cq.value,10)||0);keep();};
+    cq.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();cq.blur();}};}
+  document.querySelectorAll("[data-qd]").forEach(b=>b.onclick=()=>{if(applyQty(S.local.cajas.length+(+b.dataset.qd)))keep();});
+  const a1=$("cadd1");if(a1)a1.onclick=addCaja;
+  const cf=$("cfill");if(cf)cf.onclick=()=>{S.local.cajas.forEach(r=>{if(!r.t)r.t="linea";});keep();};
+  document.querySelectorAll("[data-cn]").forEach(i=>{i.oninput=()=>{S.local.cajas[+i.dataset.cn].n=i.value.replace(/\D/g,"").slice(0,4);save();};i.onchange=()=>{save();refreshCajas();};i.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const s=document.querySelector(`[data-ct="${i.dataset.cn}"]`);if(s)s.focus();}};});
+  document.querySelectorAll("[data-ct]").forEach(s=>s.onchange=()=>{S.local.cajas[+s.dataset.ct].t=s.value;keep();const nx=document.querySelector(`[data-cn="${+s.dataset.ct+1}"]`);if(nx&&!S.local.cajas[+s.dataset.ct+1].t){const ns=document.querySelector(`[data-ct="${+s.dataset.ct+1}"]`);if(ns)ns.focus();}});
+  document.querySelectorAll("[data-crm]").forEach(b=>b.onclick=()=>{S.local.cajas.splice(+b.dataset.crm,1);keep();});
+  const cc=$("callclear");if(cc)cc.onclick=()=>{clearAsk=true;keep();};
+  const cy=$("callclear-yes");if(cy)cy.onclick=()=>{qBackup={rows:S.local.cajas.map(r=>({n:r.n,t:r.t})),base:0,fresh:true};if(!qBackup.rows.some(r=>r.t||r.n))qBackup=null;S.local.cajas=[];clearAsk=false;keep();};
+  const cn=$("callclear-no");if(cn)cn.onclick=()=>{clearAsk=false;keep();};
+  document.querySelectorAll("[data-xrm]").forEach(b=>b.onclick=e=>{e.stopPropagation();const i=+b.dataset.xrm,t=S.local.extras[i];if(!t)return;S.local.extras.splice(i,1);S.local.cajas.forEach(r=>{const m=/^e(\d+)$/.exec(r.t);if(!m)return;if(+m[1]>i)r.t="e"+(+m[1]-1);else if(+m[1]===i)r.t="";});keep();});
+  const xa=$("xadd");if(xa)xa.onclick=()=>{addingType=true;keep();};const xc=$("xcancel");if(xc)xc.onclick=()=>{addingType=false;keep();};
+  const xo=$("xok");if(xo){const ok=()=>{const v=$("xname").value.trim();if(v.length<2){$("xname").focus();return;}S.local.extras.push({name:v});addingType=false;keep();};xo.onclick=ok;$("xname").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();ok();}};$("xname").focus();}
+  document.querySelectorAll("[data-sx]").forEach(c=>c.onchange=()=>{S.sect[c.dataset.sx].on=c.checked;keep();});
+  document.querySelectorAll("[data-on]").forEach(i=>i.onchange=()=>{S.otros[+i.dataset.on].n=i.value.trim();keep();});
+  const oa=$("oadd");if(oa)oa.onclick=()=>{S.otros.push({n:"",sched:[]});keep();};
+  document.querySelectorAll("[data-sadd]").forEach(b=>b.onclick=()=>{getSched(b.dataset.sadd).push({days:[],d:"",h:""});keep();});
+  document.querySelectorAll("[data-sday]").forEach(c=>c.onchange=()=>{const [k,i,di]=c.dataset.sday.split("~"),l=getSched(k)[+i],n=+di;if(c.checked){if(!l.days.includes(n))l.days.push(n);l.days.sort((a,b)=>a-b);}else l.days=l.days.filter(x=>x!==n);keep();});
+  document.querySelectorAll("[data-stm]").forEach(i=>i.onchange=()=>{const [k,ix,f]=i.dataset.stm.split("~");getSched(k)[+ix][f]=i.value;save();});
+  document.querySelectorAll("[data-sxrm]").forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.sxrm.split("~");getSched(k).splice(+i,1);keep();});
+  document.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const ced=b.dataset.acc,p=P(ced),ref=peopleOf().find(x=>x.ced===ced).ref,sg=suggest(ref);if(!sg||p.baja)return;Object.assign(p,{div:sg.div,sec:sg.sec,niv:sg.niv,zona:sg.zona.slice(),jor:sg.jor,acc:true});if(p.jor!=="PT")p.ptc="";keep();});
+  const aa=$("accall");if(aa)aa.onclick=()=>{const c=accCandidates();accAllBackup=c.map(p=>[p.ced,JSON.stringify(P(p.ced))]);c.forEach(p=>{const x=P(p.ced),sg=suggest(p.ref);Object.assign(x,{div:sg.div,sec:sg.sec,niv:sg.niv,zona:sg.zona.slice(),jor:sg.jor,acc:true});if(x.jor!=="PT")x.ptc="";});keep();};
+  const au=$("accundo");if(au)au.onclick=()=>{(accAllBackup||[]).forEach(([c,j])=>{S.people[c]=JSON.parse(j);});accAllBackup=null;keep();};
+  const pq=$("pq");if(pq)pq.oninput=()=>{peopleFilter=pq.value;const pos=pq.selectionStart;render();const n=$("pq");n.focus();n.setSelectionRange(pos,pos);};
+  const pend=$("pend");if(pend)pend.onclick=()=>{onlyPend=!onlyPend;render();};
+  document.querySelectorAll("[data-f]").forEach(s=>s.onchange=()=>{const p=P(s.dataset.ced),f=s.dataset.f;p[f]=s.value;
+    if(f==="ptc"){keep();return;}
+    if(f==="div"){p.sec="";p.niv="";p.zona=[];p.jor="";}if(f==="sec"){p.niv="";p.zona=[];p.jor="";}if(f==="niv"){p.zona=[];p.jor="";}
+    p.acc=false;cascade(p);if(p.jor!=="PT")p.ptc="";keep();});
+  document.querySelectorAll("[data-z]").forEach(c=>c.onchange=()=>{const p=P(c.dataset.ced),v=c.dataset.z;if(c.checked){if(!p.zona.includes(v))p.zona.push(v);}else p.zona=p.zona.filter(x=>x!==v);keep();});
+  document.querySelectorAll("[data-obs]").forEach(i=>i.onchange=()=>{P(i.dataset.obs).obs=i.value.trim();save();});
+  document.querySelectorAll("[data-baja]").forEach(b=>b.onclick=()=>{const p=P(b.dataset.baja);p.baja=!p.baja;keep();});
+  document.querySelectorAll("[data-rmadd]").forEach(b=>b.onclick=()=>{S.added=S.added.filter(a=>a.ced!==b.dataset.rmadd);delete S.people[b.dataset.rmadd];keep();});
+  const ap=$("addp");if(ap)ap.onclick=()=>{const ced=$("nced").value.trim(),nom=$("nnom").value.trim();const e=$("perr");
+    if(!/^\d{5,9}$/.test(ced)){e.textContent="Ingresá la cédula, solo números.";return;}if(nom.length<3){e.textContent="Ingresá apellido y nombre.";return;}
+    if(peopleOf().some(p=>p.ced===ced)){e.textContent="Esa cédula ya está en la lista.";return;}S.added.push({ced,nombre:nom});P(ced);keep();};
+  const sb=$("send");if(sb)sb.onclick=()=>{if(issues().length){sendAsk=true;keep();window.scrollTo(0,document.body.scrollHeight);}else sendAnswers();};
+  const sy=$("send-yes");if(sy)sy.onclick=()=>{sendAsk=false;sendAnswers();};const sn=$("send-no");if(sn)sn.onclick=()=>{sendAsk=false;keep();window.scrollTo(0,0);};const dj=$("dlj");if(dj)dj.onclick=()=>{S.savedAt=new Date().toISOString();save();downloadFile(JSON.stringify(payload()),fileName(),"application/json","xmsg");};
+  const dx=$("dlx");if(dx)dx.onclick=exportXLSX;const dc=$("dlc");if(dc)dc.onclick=()=>downloadFile(buildDoc(),"Cuestionario_"+slug(S.suc)+"_con_respuestas.html","text/html","xmsg");
+}
+$("back").onclick=()=>{resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step>1){S.step--;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
+$("next").onclick=()=>{resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step<4){S.step++;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
+
+/* ===== Exportar ===== */
+const slug=s=>s.replace(/[^\w\dáéíóúñÁÉÍÓÚÑ]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40);
+function rowsRelev(){const H=["CEDULA","SUCURSAL","DIVISION","SECCION_PUESTO","NIVEL_ESPECIALIDAD","ZONA_SECTOR","JORNADA","OBSERVACIONES","ESTADO","ACEPTO_COMO_FIGURA","YA_NO_TRABAJA","AGREGADO","NOMBRE","REFERENCIA_ACTUAL","CONTRATO_PT"];
+  return [H].concat(peopleOf().map(p=>{const x=P(p.ced),st=estado(p.ced);return [p.ced,S.suc,x.div,x.sec,x.niv,zonaTxt(x),x.jor,x.obs,st==="ok"?"COMPLETO":st==="pend"?"PENDIENTE":"BAJA",(x.acc||(()=>{const g=p.added?null:suggest(p.ref);return g&&!x.baja&&g.div===x.div&&g.sec===x.sec&&g.niv===x.niv&&g.jor===x.jor&&(g.zona||[]).join("|")===(x.zona||[]).join("|");})())?"SI":"NO",x.baja?"SI":"NO",p.added?"SI":"NO",p.nombre,p.ref,x.jor==="PT"?(x.ptc||""):""];}));}
+function rowsLocal(){const H=["SUCURSAL","TIPO","ITEM","RESPUESTA","DESDE","HASTA","DETALLE"],L=S.local,r=[H];
+  r.push([S.suc,"APERTURA","24 horas",L.h24?"Sí":"No","","",""]);
+  r.push([S.suc,"APERTURA","Lunes a sábado","Sí",L.ls.d,L.ls.h,""]);
+  r.push([S.suc,"APERTURA","Domingos y feriados",L.df.abre,L.df.abre==="Sí"?L.df.d:"",L.df.abre==="Sí"?L.df.h:"",""]);
+  r.push([S.suc,"APERTURA","Horas por semana",hoursTxt().replace(/^Horas abierto por semana: /,""),"","",""]);
+  const nums=cajaNums(),rows=cajaRows();
+  r.push([S.suc,"CAJAS","Números de caja cargados",String(nums.length),"","",rangesTxt(nums)]);
+  r.push([S.suc,"CAJAS","Total cajas físicas",nums.length?String(cajasTotal()):"","","",""]);
+  r.push([S.suc,"CAJAS","Cajas self-checkout (autopago)",nums.length?String(scoCount()):"","","",scoCount()?rangesTxt(rows.find(x=>x.key==="sco").nums):""]);
+  rows.filter(x=>x.key!=="sco").forEach(x=>r.push([S.suc,"CAJAS",x.name,nums.length?(x.q?"Sí":"No"):"","","",x.q?`${x.q} ${x.q===1?"caja":"cajas"}: ${rangesTxt(x.nums)}`:""]));
+  nums.forEach(n=>r.push([S.suc,"CAJA_NRO",String(n),cajaType(n)?typeName(cajaType(n)):"(sin tipo)","","",""]));
+  SECT.forEach(x=>{const s=S.sect[x.n],uni=unifOn()&&S.unifMP==="Sí";r.push([S.suc,"SECTOR",x.n,s.on?"Sí":"No","","",s.on?(uni&&x.n===UNIF_B?"Unificado con Mediterráneo (mismo horario)":(s.sched.length?schedTxt(s.sched):"Igual que el local")+(uni&&x.n===UNIF_A?" · Unificado con Patio de comida":"")):""]);});
+  r.push([S.suc,"SECTOR","Mediterráneo y Patio de comida unificados",unifOn()?(S.unifMP||""):"No aplica","","",""]);
+  S.otros.filter(o=>o.n).forEach(o=>r.push([S.suc,"SECTOR_OTRO",o.n,"Sí","","",o.sched.length?schedTxt(o.sched):"Igual que el local"]));return r;}
+function fmtDate(iso){const d=new Date(iso);if(isNaN(d))return "";return d.toLocaleDateString("es-PY",{day:"2-digit",month:"2-digit",year:"numeric"})+" "+d.toLocaleTimeString("es-PY",{hour:"2-digit",minute:"2-digit",hour12:false});}
+function payload(){const all=peopleOf(),cnt={ok:0,pend:0,baja:0};all.forEach(p=>cnt[estado(p.ced)]++);const L=S.local;
+  return {tipo:"cuestionario-dotacion",version:4,sucursal:S.suc,enviadoEl:S.sentAt,guardadoEl:S.savedAt,
+    resumen:{personas:all.length,completas:cnt.ok,pendientes:cnt.pend,bajas:cnt.baja,agregadas:S.added.length,cajasFisicas:cajaNums().length?String(cajasTotal()):"",selfCheckout:cajaNums().length?String(scoCount()):"",horasSemana:hoursTxt().replace(/^Horas abierto por semana: /,""),sectores:SECT.filter(x=>S.sect[x.n].on).map(x=>x.n+(unifOn()&&S.unifMP==="Sí"&&(x.n===UNIF_A||x.n===UNIF_B)?" (unificado)":"")).concat(S.otros.filter(o=>o.n).map(o=>o.n)),unificadoMP:unifOn()?S.unifMP:"",puntosPendientes:issues()},
+    filas:{relevamiento:rowsRelev(),local:rowsLocal()},estado:S};}
+const fileName=()=>"Dotacion_"+slug(S.suc)+"_"+new Date().toISOString().slice(0,10)+".json";
+async function sendAnswers(){const m=$("xmsg");m.textContent="Enviando…";const b=$("send");if(b)b.disabled=true;
+  const prev=S.sentAt;S.sentAt=new Date().toISOString();
+  try{const p=payload();await api("POST",{accion:"enviar",suc:S.suc,estado:S,resumen:p.resumen,filas:p.filas});
+    try{localStorage.setItem(KEY(S.suc),JSON.stringify(S));}catch(e){}render();
+    $("xmsg").innerHTML='<span class="ok" style="display:block">✅ ¡Listo! Tus respuestas quedaron registradas. Gracias.</span>';setSave("Enviado ✓");}
+  catch(e){S.sentAt=prev;if(b)b.disabled=false;m.textContent="No se pudo enviar ("+(e.message||"sin conexión")+"). Revisá tu internet y tocá Enviar de nuevo: no se perdió nada.";}}
+let XP=null;function loadXLSX(){if(window.XLSX)return Promise.resolve(window.XLSX);if(XP)return XP;XP=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";const t=setTimeout(()=>{XP=null;rej(new Error("timeout"));},8000);s.onload=()=>{clearTimeout(t);res(window.XLSX);};s.onerror=()=>{clearTimeout(t);XP=null;rej(new Error("no"));};document.head.appendChild(s);});return XP;}
+const csv=rows=>rows.map(r=>r.map(v=>{v=String(v??"");return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(";")).join("\r\n");
+async function exportXLSX(){const m=$("xmsg");m.textContent="Preparando el archivo…";
+  try{const X=await loadXLSX();const wb=X.utils.book_new();X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(rowsRelev()),"BASE_RELEVAMIENTO");X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(rowsLocal()),"BASE_LOCAL");
+    const out=X.write(wb,{bookType:"xlsx",type:"array"});await downloadFile(out,"Respuestas_"+slug(S.suc)+".xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","xmsg");}
+  catch(e){await downloadFile("\ufeff"+csv(rowsRelev()),"Respuestas_personas_"+slug(S.suc)+".csv","text/csv","xmsg");await downloadFile("\ufeff"+csv(rowsLocal()),"Respuestas_local_"+slug(S.suc)+".csv","text/csv","xmsg");m.textContent="Sin internet no se puede armar el Excel: se descargaron dos archivos CSV con las respuestas. Envialos igual.";}}
+async function downloadFile(data,name,mime,msgEl){const say=t=>{const e=$(msgEl);if(e)e.textContent=t;};
+  if(window.claude&&window.claude.use){let dl=null;try{dl=await window.claude.use("downloads");}catch(e){}if(dl){try{await dl.save({filename:name,data:typeof data==="string"?data:new Uint8Array(data)});say("Archivo descargado: "+name);}catch(e){say(e&&e.code==="declined"?"Descarga cancelada.":"No se pudo descargar en esta vista.");}return;}}
+  const blob=new Blob([data],{type:mime}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);say("Archivo descargado: "+name);}
+function buildDoc(){const sc="scr"+"ipt",j=JSON.stringify(S).replace(/</g,"\\u003c");
+  return "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n"+HEAD+"\n<style id=\"css\">"+CSS_SRC+"</style>\n</head>\n<body>\n<main id=\"root\"></main>\n<div class=\"bottom\"><div class=\"in\"><button class=\"btn ghost\" id=\"back\">Atrás</button><span class=\"save\" id=\"save\"></span><button class=\"btn\" id=\"next\">Siguiente</button></div></div>\n<"+sc+" type=\"application/json\" id=\"data\">"+DATA_SRC+"</"+sc+">\n<"+sc+" type=\"application/json\" id=\"cfg\">"+j+"</"+sc+">\n<"+sc+" id=\"app\">"+APP_SRC+"</"+sc+">\n</body>\n</html>\n";}
+
+/* ===== Servidor (Apps Script) ===== */
+async function api(met,datos){if(!API_URL)throw new Error("falta configurar API_URL");
+  const r=met==="GET"?await fetch(API_URL+"?"+new URLSearchParams(datos),{cache:"no-store"}):await fetch(API_URL,{method:"POST",body:JSON.stringify(datos)});
+  const j=await r.json();if(!j.ok)throw new Error(j.error||"error del servidor");return j;}
+function pantalla(html){$("root").innerHTML=`<h1>Confirmá tu local</h1><div id="view">${html}</div>`;$("back").style.visibility="hidden";$("next").style.display="none";}
+async function cargarPadron(suc){const j=await api("GET",{accion:"padron",suc});D.pad[suc]=j.personas;return j.borrador;}
+let CARGANDO=false;
+async function abrirSucursal(s){CARGANDO=true;pantalla(`<p class="soft">Cargando la lista de personas de <b>${esc(s)}</b>…</p>`);
+  try{const nube=await cargarPadron(s);let l=null;try{l=JSON.parse(localStorage.getItem(KEY(s))||"null");}catch(e){}
+    if(nube&&nube.suc===s&&(!l||(nube.savedAt||"")>(l.savedAt||"")))l=nube;
+    S=migrate((l&&l.suc===s)?l:fresh(s));S.step=S.step||1;
+    try{localStorage.setItem(KEY(S.suc),JSON.stringify(S));localStorage.setItem("cuest-gerentes-v5:last",S.suc);}catch(e){}
+    CARGANDO=false;render();window.scrollTo(0,0);setSave(nube?"Retomaste lo que guardaste antes":"");}
+  catch(e){S=null;CARGANDO=false;pantalla(`<p class="flag">No pude cargar la lista de tu sucursal (${esc(e.message||"sin conexión")}). Revisá tu conexión a internet y, si sigue, avisale a quien te mandó el link.</p><div class="export"><button class="btn" id="reint">Reintentar</button><button class="btn ghost" id="volver">Elegir otra sucursal</button></div>`);
+    $("reint").onclick=()=>abrirSucursal(s);$("volver").onclick=()=>render();}}
+let tNube=null,nubePend=false;
+function programarNube(){if(!S||!API_URL)return;setSave("Guardando…");clearTimeout(tNube);tNube=setTimeout(subirBorrador,4000);}
+async function subirBorrador(){if(!S)return;if(nubePend){programarNube();return;}nubePend=true;const suc=S.suc;
+  try{let res=null;try{res=payload().resumen;}catch(e){}await api("POST",{accion:"borrador",suc,estado:S,resumen:res});if(S&&S.suc===suc)setSave("Guardado ✓");}
+  catch(e){setSave("Sin conexión: guardado solo en este dispositivo");}finally{nubePend=false;}}
+window.addEventListener("pagehide",()=>{if(tNube&&S&&API_URL){clearTimeout(tNube);try{navigator.sendBeacon(API_URL,new Blob([JSON.stringify({accion:"borrador",suc:S.suc,estado:S})],{type:"text/plain"}));}catch(e){}}});
+let ESTADOS={};
+function badgeSuc(s){const e=ESTADOS[(s||"").replace(/\s+/g," ").trim().toUpperCase()];if(!e||!e[0]||e[0]==="Sin empezar")return "";
+  return e[0]==="Enviado"?` <span class="pill ok" style="margin-left:6px">✅ Enviado${e[1]?" el "+fmtDate(e[1]):""}</span>`:` <span class="pill pend" style="margin-left:6px">✏️ En curso</span>`;}
+async function iniciar(){if(!API_URL){pantalla('<p class="flag">Falta configurar la dirección del servidor (API_URL) en este archivo.</p>');return;}
+  S=null;render();
+  try{const j=await api("GET",{accion:"estados"});ESTADOS=j.estados||{};if(!S&&!CARGANDO)render();}catch(e){}}
+iniciar();
+</script>
+</body>
+</html>
