@@ -171,6 +171,7 @@ main.wide{max-width:1320px}
 .qty input[type=number]{width:74px;text-align:center;font-weight:700;font-size:18px}
 .qb{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--acc);background:var(--card);color:var(--acc);font-size:24px;font-weight:700;line-height:1;cursor:pointer;padding:0}
 .qb:disabled{opacity:.35;cursor:not-allowed}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 .clist{display:grid;gap:6px}
 .crow{display:grid;grid-template-columns:72px auto 1fr auto;align-items:center;gap:6px 8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 8px}
 .crow.bad{border-color:var(--bad)}.crow.pend{border-color:var(--amber);background:var(--amber-soft)}
@@ -208,7 +209,7 @@ const DATA_SRC=document.getElementById("data").textContent,APP_SRC=document.getE
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* ===== CONFIGURACIÓN: pegá acá la URL de la Web App de Apps Script ===== */
-const API_URL='https://script.google.com/macros/s/AKfycbwhaBr-AemXG4ZV07EnQIBTb_2vOAKDp7OjPofFYP6KJpEc6V2FfUGCdmtBHE0aEzHj/exec';
+const API_URL='https://script.google.com/macros/s/AKfycbx2GDc3brnZwWkq1gwB0m3Oim-do-ptZgW2z8aeUXeROB5ZQmiPO8QM9Eg8q-tCZHtbhA/exec';
 /* ======================================================================== */
 const KEY=s=>"cuest-gerentes-v5:"+s;
 const ENVIO={email:"",whatsapp:""};
@@ -217,7 +218,7 @@ const MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.m
 
 /* ===== Lógica de puestos, copiada del Excel (Maestro y Listas) ===== */
 const DIV=["Gerencia","Apoyo","Administración","Ventas","E-commerce","Producción/Perecederos","Recepcion de mercaderia"];
-const SEC={"Gerencia":["Gerencia de Local","Subgerente"],"Apoyo":["Prevención"],"Administración":["Jefatura","Encargado","Auxiliar","Tesorería","Cajas"],"Ventas":["Jefatura","Reposición","Perfilista","Limpieza/Aseador"],"E-commerce":["E-commerce"],"Producción/Perecederos":["Jefatura","Panadería","Confitería","Cocina/Rotisería","Carnicería","Pollería","Verdulería/Frutería","Lacteos","Fiambrería/Queseria"],"Recepcion de mercaderia":["Depositero","Recepcionista","Codificacion"]};
+const SEC={"Gerencia":["Gerencia de Local","Subgerente"],"Apoyo":["Prevención"],"Administración":["Jefatura","Encargado","Auxiliar","Cajas","Tesorería"],"Ventas":["Jefatura","Limpieza/Aseador","Perfilista","Reposición"],"E-commerce":["E-commerce"],"Producción/Perecederos":["Jefatura","Carnicería","Cocina/Rotisería","Confitería","Fiambrería/Queseria","Lacteos","Panadería","Pollería","Verdulería/Frutería"],"Recepcion de mercaderia":["Codificacion","Depositero","Recepcionista"]};
 function NIV(d,s){
   if(d==="Apoyo"&&s==="Prevención")return ["Encargado","Auxiliar"];
   if(d==="Administración"&&s==="Jefatura")return ["Jefe Administrativo"];
@@ -235,7 +236,7 @@ function NIV(d,s){
   if(s==="Depositero"||s==="Codificacion")return ["Encargado","Auxiliar"];
   return ["N/A"];
 }
-function ZONA(n,s){if(n==="Cajero")return ["Sala","Mediterraneo","Rotiseria","E-commerce/Pick Up","Multizona"];if(n==="Repositor")return s==="Verdulería/Frutería"?null:["Secos","Lacteos","Multisectores"];if(s==="Cocina/Rotisería"&&n&&n!=="N/A")return ["Rotisería","Green Chef"];return null;}
+function ZONA(n,s){if(n==="Cajero")return ["E-commerce/Pick Up","Mediterraneo","Parrillada","Rotiseria","Sala","Multizona"];if(n==="Repositor")return s==="Verdulería/Frutería"?null:["Lacteos","Sala","Secos","Multisectores"];if(s==="Cocina/Rotisería"&&n&&n!=="N/A")return ["Green Chef","Rotisería"];return null;}
 const PTC=["16","20","24","25","32"];
 function JOR(d,s,n){
   if(d==="Apoyo"||(d==="Administración"&&s==="Cajas"&&n==="Cajero")||(d==="Ventas"&&s==="Limpieza/Aseador")||(d==="Ventas"&&s==="Reposición")||(d==="Ventas"&&s==="Perfilista")||d==="E-commerce"||(d==="Producción/Perecederos"&&s!=="Jefatura"))return ["FT","PT"];
@@ -247,14 +248,14 @@ const SECT=[
  {n:"Patio de comida",d:"Área con varios puestos de comida (pizza, lomitos, etc.) y mesas compartidas.",t:[]},
  {n:"E-commerce",d:"Preparación de pedidos online y retiro en el local (Pick Up).",t:[{div:"E-commerce"},{niv:"Cajero",zona:"E-commerce/Pick Up"}]},
  {n:"La Canasta",d:"",t:[]},
- {n:"Parrillada",d:"",t:[]},
+ {n:"Parrillada",d:"",t:[{niv:"Cajero",zona:"Parrillada"}]},
  {n:"Green Chef",d:"Comidas saludables; espacio aparte de la rotisería, con personal propio.",t:[{sec:"Cocina/Rotisería",zona:"Green Chef"}]}
 ];
 const UNIF_A="Mediterráneo",UNIF_B="Patio de comida";
 const unifOn=()=>S.sect[UNIF_A].on&&S.sect[UNIF_B].on;
 const CAJAS=[["linea","Línea de caja"],["medit","Mediterráneo"],["canasta","La Canasta"],["parrilla","Parrillada"],["sco","Self-checkout"]];
 const CCOL={linea:"var(--acc)",medit:"var(--blue)",canasta:"var(--amber)",parrilla:"var(--bad)",sco:"var(--purple)"},XCOL=["var(--teal)","var(--pink)","var(--olive)"];
-let resetAsk=false,addingType=false,qBackup=null,clearAsk=false,sendAsk=false;
+let confRev=false,resetAsk=false,addingType=false,qBackup=null,clearAsk=false,sendAsk=false;
 function numsOf(txt){const out=[];String(txt||"").split(/[,;]|\s+y\s+/).forEach(t=>{t=t.trim();if(!t)return;const m=t.match(/^(\d+)\s*(?:a|-|al|hasta)\s*(\d+)$/i);if(m){for(let i=+m[1];i<=+m[2]&&out.length<400;i++)out.push(i);}else if(/^\d+$/.test(t))out.push(+t);});return out;}
 const numOf=r=>{const n=parseInt(r.n,10);return n>0?n:null;};
 function cajaNums(){return [...new Set(S.local.cajas.map(numOf).filter(n=>n))].sort((a,b)=>a-b);}
@@ -298,9 +299,17 @@ function setSave(t){$("save").textContent=t;}
 
 /* ===== Personas ===== */
 function peopleOf(){const base=(D.pad[S.suc]||[]).map(p=>({ced:p[0],ver:p[4]||"",nombre:p[1],ref:(p[2]&&p[3])?p[2]+" - "+p[3]:(p[2]||p[3]),added:false}));
-  return base.concat(S.added.map(a=>({ced:a.ced,ver:a.ced,nombre:a.nombre,ref:"Agregado por el gerente",added:true})));}
-function P(ced){if(!S.people[ced])S.people[ced]={div:"",sec:"",niv:"",zona:[],jor:"",ptc:"",obs:"",baja:false,acc:false};return S.people[ced];}
-function estado(ced){const p=P(ced);if(p.baja)return "baja";if(!p.div||!p.sec||!p.niv||!p.jor)return "pend";if(p.jor==="PT"&&!p.ptc)return "pend";const z=ZONA(p.niv,p.sec);if(z&&!p.zona.length)return "pend";return "ok";}
+  const all=base.concat(S.added.map(a=>({ced:a.ced,ver:a.ced,nombre:a.nombre,ref:"Agregado por el gerente",added:true})));for(const k in PERS)delete PERS[k];all.forEach(p=>PERS[p.ced]=p);return all;}
+function P(ced){if(!S.people[ced])S.people[ced]={div:"",sec:"",niv:"",zona:[],jor:"",ptc:"",cc:"",obs:"",oa:"",oc:"",baja:false,acc:false};return S.people[ced];}
+const CC=["Hace menos de 1 mes","Hace 1 a 6 meses","Hace más de 6 meses","Empieza próximamente","Cubre a alguien por un tiempo (después vuelve a su puesto)","Siempre estuvo en este puesto (RRHH lo tiene mal)"];
+/* ¿El puesto elegido es distinto al que figura en RRHH? (solo personas del padrón con clasificación sugerida) */
+function cambioCargo(p){const x=P(p.ced);if(p.added||x.baja||!x.div)return false;const g=suggest(p.ref);if(!g)return false;
+  return x.div!==g.div||(!!x.sec&&x.sec!==g.sec)||(!!x.niv&&!!g.niv&&x.niv!==g.niv);}
+/* Parrillada no tiene personal propio: un cajero la cubre, así que no puede ser su única zona */
+const soloParrillada=x=>(x.zona||[]).length===1&&x.zona[0]==="Parrillada";
+function ccFalta(p){const x=P(p.ced);return cambioCargo(p)&&!x.cc;}
+const PERS={};
+function estado(ced){const p=P(ced);if(p.baja)return "baja";if(!p.div)return "pend";if(p.div==="Otro"?(!(p.oa||"").trim()||!(p.oc||"").trim()||!p.jor):(!p.sec||!p.niv||!p.jor))return "pend";if(p.jor==="PT"&&!p.ptc)return "pend";const z=ZONA(p.niv,p.sec);if(z&&!p.zona.length)return "pend";if(z&&soloParrillada(p))return "pend";const pp=PERS[ced]||(S&&S.suc?(peopleOf(),PERS[ced]):null);if(pp&&ccFalta(pp))return "pend";return "ok";}
 function suggest(ref){
   const [secRaw,carRaw]=String(ref||"").split(" - ");const sec=(secRaw||"").toUpperCase().replace(/\s+/g," ").replace(/\.$/,"").trim(),car=(carRaw||"").toUpperCase().trim();
   const has=(...ks)=>ks.some(k=>sec.includes(k));const enc=car.startsWith("ENCARGADO"),aux=car.startsWith("AUXILIAR")||car==="OPERADOR"||car==="OPERARIO";
@@ -325,7 +334,7 @@ function suggest(ref){
   else if(has("PERECEDEROS")&&car==="JEFE"){set("Producción/Perecederos","Jefatura","Jefe de Perecederos");}
   else if(has("CARTELERIA","LETRISTA")||car==="PERFILISTA"||car==="LETRISTA"){set("Ventas","Perfilista");}
   else if(has("PICK UP","E-COMERCE","ECOMMERCE","CHOFER")||car==="PICKEADOR"||car==="CHOFER"||car==="DELIVERY"){set("E-commerce","E-commerce",(car==="CHOFER"||car==="DELIVERY")?"Delivery":"Pickeador/cajero");}
-  else if(car==="REPOSITOR"){set("Ventas","Reposición","Repositor",has("ALMACEN")?["Secos"]:null);}
+  else if(car==="REPOSITOR"){set("Ventas","Reposición","Repositor",has("ALMACEN")?["Secos"]:has("SALA")?["Sala"]:null);}
   else if(car==="CAJERO"||car==="CAJERO PART TIME"){set("Administración","Cajas","Cajero",null,car.includes("PART")?"PT":"FT");}
   if(!r.div)return null;const p={div:r.div,sec:r.sec||"",niv:r.niv||"",zona:r.zona||[],jor:r.jor||""};cascade(p);if(p.niv&&!p.jor)p.jor="FT";return p;}
 function sugTxt(s){return s?[s.div,s.sec,s.niv,s.zona&&s.zona.length?s.zona.join(" | "):"",s.jor].filter(Boolean).join(" › "):"";}
@@ -404,19 +413,23 @@ function vPeople(){
     const opt=(arr,cur)=>`<option value="">Elegí…</option>`+arr.map(v=>`<option ${cur===v?'selected':''}>${esc(v)}</option>`).join("");
     const sg=p.added?null:suggest(p.ref);
     return `<div class="person ${x.baja?'baja':''}" data-pc="${p.ced}"><div class="who"><span><b>${esc(p.nombre)}</b> <span class="soft small">· CI ${esc(p.ver||p.ced)}</span></span><span class="who-r"><span class="pill ${st}">${st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá"}</span><button class="lnk" data-baja="${p.ced}">${x.baja?'Deshacer':'Ya no trabaja acá'}</button></span></div>
-    <div class="ref"><span>Hoy figura como: <b>${esc(p.ref)}</b>${x.baja?'<span class="hint">Marcada como baja: no hace falta completar nada más.</span>':st==="ok"?'':sg?`<span class="hint">Se clasificaría como: ${esc(sugTxt(sg))}</span>`:(p.added?'':'<span class="hint">No hay clasificación sugerida: elegila abajo</span>')}${!x.baja&&st!=="ok"&&x.acc?'<span class="hint">Sugerencia aplicada: completá lo que falta abajo</span>':''}</span>
-      ${p.added?'<button class="btn ghost small" data-rmadd="'+p.ced+'">Quitar</button>':''}${x.baja?'<span class="pill baja">Baja confirmada ✓</span>':st==="ok"?`<span class="pill ok">${x.acc?"Aceptado ✓":"Completo ✓"}</span>`:(sg&&!x.acc&&!p.added?`<button class="btn small" data-acc="${p.ced}">Aceptar</button>`:'')}</div>
+    <div class="ref"><span>Hoy figura como: <b>${esc(p.ref)}</b>${x.baja?'<span class="hint">Marcada como baja: no hace falta completar nada más.</span>':st==="ok"?'':sg?`<span class="hint">Se clasificaría como: ${esc(sugTxt(sg))}</span>`:(p.added?'':'<span class="hint">No hay clasificación sugerida: elegila abajo, o elegí «Otro» en División si el puesto no está en el organigrama</span>')}${!x.baja&&st!=="ok"&&x.acc?'<span class="hint">Sugerencia aplicada: completá lo que falta abajo</span>':''}</span>
+      ${p.added?'<button class="btn ghost small" data-rmadd="'+p.ced+'">Quitar</button>':''}${x.baja?'<span class="pill baja">Baja confirmada ✓</span>':st==="ok"?`<span class="pill ok">${x.acc?"Confirmado ✓":"Completo ✓"}</span>`:(sg&&!x.acc&&!p.added?`<button class="btn small" data-acc="${p.ced}">Sí, es correcto</button>`:'')}</div>
     <div class="sel">
-      <label>División<select data-f="div" data-ced="${p.ced}">${opt(DIV,x.div)}</select></label>
-      <label>Sección / Puesto<select data-f="sec" data-ced="${p.ced}" ${x.div?'':'disabled'}>${opt(SEC[x.div]||[],x.sec)}</select></label>
+      <label>División<select data-f="div" data-ced="${p.ced}">${opt(DIV,x.div)}<option value="Otro" ${x.div==="Otro"?"selected":""}>Otro (no está en el organigrama)</option></select></label>
+      ${x.div==="Otro"?`<label style="${(x.oa||"").trim()?"":"color:var(--bad);font-weight:600"}">Área / sector${(x.oa||"").trim()?"":" · falta completar"}<input type="text" data-o="oa" data-ced="${p.ced}" value="${esc(x.oa||"")}" maxlength="60" placeholder="Ej.: Mini Tienda"></label>
+      <label style="${(x.oc||"").trim()?"":"color:var(--bad);font-weight:600"}">Cargo${(x.oc||"").trim()?"":" · falta completar"}<input type="text" data-o="oc" data-ced="${p.ced}" value="${esc(x.oc||"")}" maxlength="60" placeholder="Ej.: Asesor de ventas"></label>
+      <label>Jornada<select data-f="jor" data-ced="${p.ced}">${opt(["FT","PT"],x.jor)}</select></label>`:`<label>Sección / Puesto<select data-f="sec" data-ced="${p.ced}" ${x.div?'':'disabled'}>${opt(SEC[x.div]||[],x.sec)}</select></label>
       <label>Nivel / Especialidad<select data-f="niv" data-ced="${p.ced}" ${x.sec?'':'disabled'}>${opt(x.sec?NIV(x.div,x.sec):[],x.niv)}</select></label>
-      <label>Jornada<select data-f="jor" data-ced="${p.ced}" ${x.niv?'':'disabled'}>${opt(x.niv?JOR(x.div,x.sec,x.niv):[],x.jor)}</select></label>
+      <label>Jornada<select data-f="jor" data-ced="${p.ced}" ${x.niv?'':'disabled'}>${opt(x.niv?JOR(x.div,x.sec,x.niv):[],x.jor)}</select></label>`}
       ${x.jor==="PT"?`<label style="${x.ptc?"":"color:var(--bad);font-weight:600"}">Contrato PT${x.ptc?"":" · falta elegir"}<select data-f="ptc" data-ced="${p.ced}">${`<option value="">Elegí…</option>`+PTC.map(v=>`<option value="${v}" ${x.ptc===v?"selected":""}>${v} horas</option>`).join("")}</select></label>`:""}
     </div>
-    ${z?`<div class="zona"><span class="small ${x.zona.length?"soft":""}" style="width:100%;${x.zona.length?"":"color:var(--bad)"}">Zona / Sector: ${x.zona.length?"podés marcar más de uno":"falta elegir al menos una"}</span>${z.map(v=>`<label class="${x.zona.includes(v)?'on':''}"><input type="checkbox" data-z="${esc(v)}" data-ced="${p.ced}" ${x.zona.includes(v)?'checked':''}>${esc(v)}</label>`).join("")}</div>`:''}
-    <div class="obs"><input type="text" value="${esc(x.obs)}" data-obs="${p.ced}" placeholder="Observaciones (opcional)" maxlength="200"></div></div>`;};
-  return `<h2>Personas por sector</h2><p class="soft">Esta es la lista de RRHH de tu sucursal. Si la clasificación sugerida está bien, tocá <b>Aceptar</b> (o aceptá todas juntas); si no, corregila abajo. Cuando completás todos los campos a mano, la persona queda <b>Completa</b> sola, sin tocar Aceptar. Marcá quién ya no trabaja acá y agregá a quien falte.</p>
-  ${(()=>{const n=accCandidates().length;return n||accAllBackup?`<div class="card" style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between">${n?`<span class="small">Hay <b>${n}</b> ${n===1?"persona":"personas"} con clasificación sugerida sin tocar. Primero marcá las bajas y después aceptá todas de una vez.</span><button class="btn small" id="accall">Aceptar ${n===1?"la sugerencia":`las ${n} sugerencias`}</button>`:""}${accAllBackup?`<span class="small soft">Se aceptaron ${accAllBackup.length} sugerencias. <button class="lnk" id="accundo">Deshacer</button></span>`:""}</div>`:"";})()}
+    ${z?`<div class="zona"><span class="small ${x.zona.length&&!soloParrillada(x)?"soft":""}" style="width:100%;${x.zona.length&&!soloParrillada(x)?"":"color:var(--bad);font-weight:600"}">Zona / Sector: ${!x.zona.length?"falta elegir al menos una":soloParrillada(x)?"Parrillada no puede ser la única zona: nadie trabaja solo ahí, un cajero la cubre. Marcá también la zona donde trabaja habitualmente":"podés marcar más de uno"}</span>${z.map(v=>`<label class="${x.zona.includes(v)?'on':''}"><input type="checkbox" data-z="${esc(v)}" data-ced="${p.ced}" ${x.zona.includes(v)?'checked':''}>${esc(v)}</label>`).join("")}</div>`:''}
+    ${cambioCargo(p)?`<div class="cjs warn0" data-ccbox="${p.ced}"><b>⚠️ Este puesto es distinto al que figura en RRHH</b> (${esc(p.ref)}). Indicá desde cuándo.
+      <div class="sel" style="margin-top:8px"><label style="${x.cc?"":"color:var(--bad);font-weight:600"}">¿Desde cuándo está en este puesto?${x.cc?"":" · falta elegir"}<select data-f="cc" data-ced="${p.ced}"><option value="">Elegí…</option>${CC.map(v=>`<option ${x.cc===v?"selected":""}>${esc(v)}</option>`).join("")}</select></label></div></div>`:""}
+    <div class="obs">${cambioCargo(p)?`<span class="small soft" style="width:100%">Observación (opcional): si querés, contá el motivo del cambio</span>`:""}<input type="text" value="${esc(x.obs)}" data-obs="${p.ced}" placeholder="${cambioCargo(p)?(x.cc==="Empieza próximamente"?"Ej.: empieza el 01/11, cubre la vacante de cajas":x.cc&&x.cc.startsWith("Cubre")?"Ej.: cubre vacaciones de Juan Pérez hasta el 15/11":"Ej.: pasó de repositor a cajero por ascenso"):"Observaciones (opcional)"}" maxlength="200"></div></div>`;};
+  return `<h2>Personas por sector</h2><p class="soft">Esta es la lista de RRHH de tu sucursal. Revisá a cada persona: si la clasificación sugerida es correcta, tocá <b>Sí, es correcto</b>; si no, corregila abajo. Cuando completás todos los campos a mano, la persona queda <b>Completa</b> sola, sin tocar ese botón. Marcá quién ya no trabaja acá y agregá a quien falte.</p>
+  
   <div class="bar"><span class="pill">${all.length} personas</span><span class="pill ok">${cnt.ok} completas</span><span class="pill pend">${cnt.pend} pendientes</span>${cnt.baja?`<span class="pill baja">${cnt.baja} bajas</span>`:''}</div>
   <div class="bar"><input type="search" id="pq" value="${esc(peopleFilter)}" placeholder="Buscar por nombre…" autocomplete="off"><button class="btn gray" id="pend" aria-pressed="${onlyPend}">${onlyPend?'Ver todas':'Solo pendientes'}</button></div>
   ${list.map(pcard).join("")||'<p class="soft">No hay personas con ese filtro.</p>'}
@@ -425,6 +438,8 @@ function vPeople(){
 function issues(){
   const out=[],all=peopleOf();const pend=all.filter(p=>estado(p.ced)==="pend").length;
   {const np=all.filter(p=>{const x=P(p.ced);return !x.baja&&x.jor==="PT"&&!x.ptc;}).length;if(np)out.push(`${np} ${np===1?"persona PT sin":"personas PT sin"} tipo de contrato (16, 20, 24, 25 o 32 horas) (paso 3)`);}
+  {const nc=all.filter(p=>ccFalta(p)).length;if(nc)out.push(`${nc} ${nc===1?"persona tiene":"personas tienen"} un puesto distinto al de RRHH sin indicar desde cuándo (paso 3)`);}
+  {const npz=all.filter(p=>{const x=P(p.ced);return !x.baja&&ZONA(x.niv,x.sec)&&soloParrillada(x);}).length;if(npz)out.push(`${npz} ${npz===1?"cajero tiene":"cajeros tienen"} Parrillada como única zona: marcá también su zona habitual (paso 3)`);}
   if(pend)out.push(`${pend} ${pend===1?'persona pendiente':'personas pendientes'} de clasificar (paso 3)`);
   SECT.filter(x=>!S.sect[x.n].on&&(countSector(x)||0)>0).forEach(x=>out.push(`No marcaste "${x.n}" como sector del local, pero hay ${countSector(x)} ${countSector(x)===1?'persona asignada':'personas asignadas'} ahí (paso 2 o 3)`));
   SECT.filter(x=>S.sect[x.n].on&&x.t.length&&countSector(x)===0).forEach(x=>out.push(`Marcaste "${x.n}" pero no hay personas asignadas ahí (paso 3)`));
@@ -438,15 +453,28 @@ function issues(){
   const noT=S.local.cajas.filter(r=>numOf(r)&&!r.t).length;if(noT)out.push(`Hay ${noT} ${noT===1?"caja sin tipo":"cajas sin tipo"}: elegí si es Línea de caja, Mediterráneo, etc. (paso 1)`);
   return out;
 }
+function resumenDotacion(){const g={},orden=[];let sin=0,act=0,pt=0;
+  peopleOf().forEach(p=>{const x=P(p.ced);if(x.baja)return;act++;if(x.jor==="PT")pt++;
+    const otro=x.div==="Otro",d=x.div,a=otro?(x.oa||"").trim():x.sec,n=otro?(x.oc||"").trim():(x.niv&&x.niv!=="N/A"?x.niv:"");
+    if(!d||!a){sin++;return;}
+    if(!g[d]){g[d]={t:0,r:{}};orden.push(d);}const k=n?a+" › "+n:a;g[d].t++;const r=g[d].r[k]=g[d].r[k]||{t:0,pt:0};r.t++;if(x.jor==="PT")r.pt++;});
+  const divs=DIV.concat(["Otro"]).filter(d=>g[d]);
+  return `<div class="card"><b>Tu dotación según lo que cargaste</b>
+  <p class="small soft" style="margin:4px 0 8px">Mirá si estos números coinciden con la realidad de tu local. Si algo no cierra (por ejemplo, faltan cajeros), volvé al paso anterior y corregilo.</p>
+  <table class="sum"><tr><td><b>Personas activas</b></td><td><b>${act}</b>${pt?` (${pt} PT)`:""}</td></tr>
+  ${divs.map(d=>`<tr><td colspan="2" style="padding-top:10px"><b>${esc(d==="Otro"?"Otro (fuera del organigrama)":d)}</b> · ${g[d].t}</td></tr>`+Object.keys(g[d].r).sort((a,b)=>a.localeCompare(b,"es")).map(k=>`<tr><td style="padding-left:14px">${esc(k)}</td><td>${g[d].r[k].t}${g[d].r[k].pt?` <span class="soft small">(${g[d].r[k].pt} PT)</span>`:""}</td></tr>`).join("")).join("")}
+  ${sin?`<tr><td style="padding-top:10px;color:var(--bad)"><b>Sin clasificar todavía</b></td><td style="padding-top:10px;color:var(--bad)"><b>${sin}</b></td></tr>`:""}</table></div>`;}
 function vReview(){const all=peopleOf(),cnt={ok:0,pend:0,baja:0};all.forEach(p=>cnt[estado(p.ced)]++);const is=issues();
   return `<h2>Revisá y enviá</h2>
   ${is.length?is.map(x=>`<p class="flag">${esc(x)}</p>`).join("")+'<p class="soft small">Podés enviar igual, pero conviene resolver estos puntos.</p>':'<p class="ok">Todo completo. Tocá Enviar respuestas.</p>'}
   <div class="card"><table class="sum"><tr><td>Sucursal</td><td>${esc(S.suc)}</td></tr><tr><td>Sectores del local</td><td>${SECT.filter(x=>S.sect[x.n].on).length+S.otros.filter(o=>o.n).length}</td></tr><tr><td>Cajas físicas</td><td>${cajaNums().length?cajasTotal():"–"}</td></tr><tr><td>Cajas self-checkout</td><td>${cajaNums().length?scoCount():"–"}</td></tr><tr><td>Personas completas</td><td>${cnt.ok}</td></tr><tr><td>Pendientes</td><td>${cnt.pend}</td></tr><tr><td>Ya no trabajan acá</td><td>${cnt.baja}</td></tr><tr><td>Agregadas</td><td>${S.added.length}</td></tr></table></div>
+  ${resumenDotacion()}
   <div class="card"><b>Enviar respuestas</b>
   <p class="small soft" style="margin:4px 0 10px">Tocá <b>Enviar</b> y tus respuestas quedan registradas. Si después corregís algo, podés volver a enviar: vale el último envío.</p>
-  ${sendAsk?`<p class="cjs warn0">Hay ${issues().length} ${issues().length===1?"punto":"puntos"} sin resolver (mirá la lista de arriba). ¿Enviar igual? <span class="adds" style="margin-top:6px"><button class="btn small" id="send-yes">Sí, enviar igual</button><button class="btn ghost small" id="send-no">Primero reviso</button></span></p>`:`<div class="export"><button class="btn" id="send">Enviar respuestas</button>${S.sentAt?`<span class="small soft">✅ Enviado el ${fmtDate(S.sentAt)}. Si corregiste algo, enviá de nuevo.</span>`:''}</div>`}
+  ${sendAsk?`<p class="cjs warn0">Hay ${issues().length} ${issues().length===1?"punto":"puntos"} sin resolver (mirá la lista de arriba). ¿Enviar igual? <span class="adds" style="margin-top:6px"><button class="btn small" id="send-yes">Sí, enviar igual</button><button class="btn ghost small" id="send-no">Primero reviso</button></span></p>`:`<label class="small" style="display:flex;gap:10px;align-items:flex-start;margin:4px 0 12px;cursor:pointer"><input type="checkbox" id="confrev" ${confRev?"checked":""} style="width:20px;height:20px;flex:none;margin-top:1px"><span><b>Confirmo que revisé a cada persona y que esta es la dotación actual de mi local.</b></span></label>
+  <div class="export"><button class="btn" id="send" ${confRev?"":"disabled"}>Enviar respuestas</button>${confRev?"":'<span class="small soft">Marcá la confirmación para poder enviar.</span>'}${S.sentAt?`<span class="small soft">✅ Enviado el ${fmtDate(S.sentAt)}. Si corregiste algo, enviá de nuevo.</span>`:''}</div>`}
   <p class="msg" id="xmsg"></p>
-  <details class="more"><summary>Más opciones</summary><div class="export" style="margin-top:8px"><button class="btn ghost small" id="dlj">Descargar archivo de respuestas</button><button class="btn ghost small" id="dlx">Descargar en Excel</button><button class="btn ghost small" id="dlc">Guardar copia con mis respuestas</button></div></details></div>`;
+  <details class="more"><summary>Más opciones</summary><div class="export" style="margin-top:8px"><button class="btn ghost small" id="dlj">Descargar archivo de respuestas</button><button class="btn ghost small" id="dlx">Descargar en Excel</button>${API_URL?"":`<button class="btn ghost small" id="dlc">Guardar copia con mis respuestas</button>`}</div></details></div>`;
 }
 const DH={"Gerencia":215,"Apoyo":28,"Administración":150,"Ventas":275,"E-commerce":190,"Producción/Perecederos":8,"Recepcion de mercaderia":45};
 const wrapTxt=t=>esc(t).replace(/\//g,"/\u200b");
@@ -480,8 +508,8 @@ function bind(){
   if(ORG)return;
   const rs=$("rst");if(rs)rs.onclick=()=>{resetAsk=true;render();window.scrollTo(0,0);};
   const rn=$("rst-no");if(rn)rn.onclick=()=>{resetAsk=false;render();};
-  const ry=$("rst-yes");if(ry)ry.onclick=()=>{const suc=S.suc,lk=S.locked;S=fresh(suc);if(lk)S.locked=true;resetAsk=false;accAllBackup=null;qBackup=null;clearAsk=false;sendAsk=false;addingType=false;peopleFilter="";onlyPend=false;save();render();window.scrollTo(0,0);setSave("Se borró todo. Empezaste de nuevo.");};
-  const chg=$("chg");if(chg)chg.onclick=()=>{save();S=null;render();window.scrollTo(0,0);};
+  const ry=$("rst-yes");if(ry)ry.onclick=()=>{const suc=S.suc,lk=S.locked;S=fresh(suc);if(lk)S.locked=true;confRev=false;resetAsk=false;accAllBackup=null;qBackup=null;clearAsk=false;sendAsk=false;addingType=false;peopleFilter="";onlyPend=false;save();render();window.scrollTo(0,0);setSave("Se borró todo. Empezaste de nuevo.");};
+  const chg=$("chg");if(chg)chg.onclick=()=>{save();clearTimeout(tNube);subirBorrador();S=null;render();window.scrollTo(0,0);};
   const sq=$("sucq");if(sq){sq.oninput=()=>{sucFilter=sq.value;const pos=sq.selectionStart;render();const n=$("sucq");n.focus();n.setSelectionRange(pos,pos);};document.querySelectorAll("[data-suc]").forEach(b=>b.onclick=()=>abrirSucursal(b.dataset.suc));return;}
   const keep=()=>{const y=window.scrollY;save();render();window.scrollTo(0,y);};
   document.querySelectorAll("[data-yn]").forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{const [k,id]=g.dataset.yn.split("|"),v=b.dataset.v;
@@ -524,27 +552,35 @@ function bind(){
   const pq=$("pq");if(pq)pq.oninput=()=>{peopleFilter=pq.value;const pos=pq.selectionStart;render();const n=$("pq");n.focus();n.setSelectionRange(pos,pos);};
   const pend=$("pend");if(pend)pend.onclick=()=>{onlyPend=!onlyPend;render();};
   document.querySelectorAll("[data-f]").forEach(s=>s.onchange=()=>{const p=P(s.dataset.ced),f=s.dataset.f;p[f]=s.value;
-    if(f==="ptc"){keep();return;}
+    if(f==="ptc"||f==="cc"){keep();return;}
     if(f==="div"){p.sec="";p.niv="";p.zona=[];p.jor="";}if(f==="sec"){p.niv="";p.zona=[];p.jor="";}if(f==="niv"){p.zona=[];p.jor="";}
     p.acc=false;cascade(p);if(p.jor!=="PT")p.ptc="";keep();});
   document.querySelectorAll("[data-z]").forEach(c=>c.onchange=()=>{const p=P(c.dataset.ced),v=c.dataset.z;if(c.checked){if(!p.zona.includes(v))p.zona.push(v);}else p.zona=p.zona.filter(x=>x!==v);keep();});
-  document.querySelectorAll("[data-obs]").forEach(i=>i.onchange=()=>{P(i.dataset.obs).obs=i.value.trim();save();});
+  document.querySelectorAll("[data-o]").forEach(i=>{const ced=i.dataset.ced,f=i.dataset.o,base=f==="oa"?"Área / sector":"Cargo";
+    const upd=()=>{const ok=!!i.value.trim(),l=i.closest("label");l.firstChild.nodeValue=base+(ok?"":" · falta completar");l.style.color=ok?"":"var(--bad)";l.style.fontWeight=ok?"":"600";
+      const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}};
+    i.oninput=()=>{P(ced)[f]=i.value;P(ced).acc=false;upd();};i.onchange=()=>{P(ced)[f]=i.value.trim();upd();save();};});
+  document.querySelectorAll("[data-obs]").forEach(i=>{const ced=i.dataset.obs;
+    const upd=()=>{const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}
+      };
+    i.oninput=()=>{P(ced).obs=i.value;upd();};i.onchange=()=>{P(ced).obs=i.value.trim();upd();save();};});
   document.querySelectorAll("[data-baja]").forEach(b=>b.onclick=()=>{const p=P(b.dataset.baja);p.baja=!p.baja;keep();});
   document.querySelectorAll("[data-rmadd]").forEach(b=>b.onclick=()=>{S.added=S.added.filter(a=>a.ced!==b.dataset.rmadd);delete S.people[b.dataset.rmadd];keep();});
   const ap=$("addp");if(ap)ap.onclick=()=>{const ced=$("nced").value.trim(),nom=$("nnom").value.trim();const e=$("perr");
     if(!/^\d{5,9}$/.test(ced)){e.textContent="Ingresá la cédula, solo números.";return;}if(nom.length<3){e.textContent="Ingresá apellido y nombre.";return;}
     if(peopleOf().some(p=>p.ced===ced)){e.textContent="Esa cédula ya está en la lista.";return;}S.added.push({ced,nombre:nom});P(ced);keep();};
-  const sb=$("send");if(sb)sb.onclick=()=>{if(issues().length){sendAsk=true;keep();window.scrollTo(0,document.body.scrollHeight);}else sendAnswers();};
-  const sy=$("send-yes");if(sy)sy.onclick=()=>{sendAsk=false;sendAnswers();};const sn=$("send-no");if(sn)sn.onclick=()=>{sendAsk=false;keep();window.scrollTo(0,0);};const dj=$("dlj");if(dj)dj.onclick=()=>{S.savedAt=new Date().toISOString();save();downloadFile(JSON.stringify(payload()),fileName(),"application/json","xmsg");};
+  const cr=$("confrev");if(cr)cr.onchange=()=>{confRev=cr.checked;keep();};
+  const sb=$("send");if(sb)sb.onclick=()=>{if(!confRev)return;if(issues().length){sendAsk=true;keep();window.scrollTo(0,document.body.scrollHeight);}else sendAnswers();};
+  const sy=$("send-yes");if(sy)sy.onclick=()=>{sendAsk=false;if(confRev)sendAnswers();};const sn=$("send-no");if(sn)sn.onclick=()=>{sendAsk=false;keep();window.scrollTo(0,0);};const dj=$("dlj");if(dj)dj.onclick=()=>{S.savedAt=new Date().toISOString();save();downloadFile(JSON.stringify(payload()),fileName(),"application/json","xmsg");};
   const dx=$("dlx");if(dx)dx.onclick=exportXLSX;const dc=$("dlc");if(dc)dc.onclick=()=>downloadFile(buildDoc(),"Cuestionario_"+slug(S.suc)+"_con_respuestas.html","text/html","xmsg");
 }
-$("back").onclick=()=>{resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step>1){S.step--;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
-$("next").onclick=()=>{resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step<4){S.step++;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
+$("back").onclick=()=>{confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step>1){S.step--;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
+$("next").onclick=()=>{confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step<4){S.step++;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
 
 /* ===== Exportar ===== */
 const slug=s=>s.replace(/[^\w\dáéíóúñÁÉÍÓÚÑ]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40);
-function rowsRelev(){const H=["CEDULA","SUCURSAL","DIVISION","SECCION_PUESTO","NIVEL_ESPECIALIDAD","ZONA_SECTOR","JORNADA","OBSERVACIONES","ESTADO","ACEPTO_COMO_FIGURA","YA_NO_TRABAJA","AGREGADO","NOMBRE","REFERENCIA_ACTUAL","CONTRATO_PT"];
-  return [H].concat(peopleOf().map(p=>{const x=P(p.ced),st=estado(p.ced);return [p.ced,S.suc,x.div,x.sec,x.niv,zonaTxt(x),x.jor,x.obs,st==="ok"?"COMPLETO":st==="pend"?"PENDIENTE":"BAJA",(x.acc||(()=>{const g=p.added?null:suggest(p.ref);return g&&!x.baja&&g.div===x.div&&g.sec===x.sec&&g.niv===x.niv&&g.jor===x.jor&&(g.zona||[]).join("|")===(x.zona||[]).join("|");})())?"SI":"NO",x.baja?"SI":"NO",p.added?"SI":"NO",p.nombre,p.ref,x.jor==="PT"?(x.ptc||""):""];}));}
+function rowsRelev(){const H=["CEDULA","SUCURSAL","DIVISION","SECCION_PUESTO","NIVEL_ESPECIALIDAD","ZONA_SECTOR","JORNADA","OBSERVACIONES","ESTADO","ACEPTO_COMO_FIGURA","YA_NO_TRABAJA","AGREGADO","NOMBRE","REFERENCIA_ACTUAL","CONTRATO_PT","CAMBIO_PUESTO"];
+  return [H].concat(peopleOf().map(p=>{const x=P(p.ced),st=estado(p.ced);return [p.ced,S.suc,x.div,x.div==="Otro"?(x.oa||"").trim():x.sec,x.div==="Otro"?(x.oc||"").trim():x.niv,x.div==="Otro"?"":zonaTxt(x),x.jor,x.obs,st==="ok"?"COMPLETO":st==="pend"?"PENDIENTE":"BAJA",(x.acc||(()=>{const g=p.added?null:suggest(p.ref);return g&&!x.baja&&g.div===x.div&&g.sec===x.sec&&g.niv===x.niv&&g.jor===x.jor&&(g.zona||[]).join("|")===(x.zona||[]).join("|");})())?"SI":"NO",x.baja?"SI":"NO",p.added?"SI":"NO",p.nombre,p.ref,x.jor==="PT"?(x.ptc||""):"",cambioCargo(p)?(x.cc||"(sin indicar)"):""];}));}
 function rowsLocal(){const H=["SUCURSAL","TIPO","ITEM","RESPUESTA","DESDE","HASTA","DETALLE"],L=S.local,r=[H];
   r.push([S.suc,"APERTURA","24 horas",L.h24?"Sí":"No","","",""]);
   r.push([S.suc,"APERTURA","Lunes a sábado","Sí",L.ls.d,L.ls.h,""]);
