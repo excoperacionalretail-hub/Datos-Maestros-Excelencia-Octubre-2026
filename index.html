@@ -624,10 +624,13 @@ async function api(met,datos){if(!API_URL)throw new Error("falta configurar API_
   const r=met==="GET"?await fetch(API_URL+"?"+new URLSearchParams(datos),{cache:"no-store"}):await fetch(API_URL,{method:"POST",body:JSON.stringify(datos)});
   const j=await r.json();if(!j.ok)throw new Error(j.error||"error del servidor");return j;}
 function pantalla(html){$("root").innerHTML=`<h1>Confirmá tu local</h1><div id="view">${html}</div>`;$("back").style.visibility="hidden";$("next").style.display="none";}
-async function cargarPadron(suc){const j=await api("GET",{accion:"padron",suc});D.pad[suc]=j.personas;return j.borrador;}
+const REINICIO={};
+async function cargarPadron(suc){const j=await api("GET",{accion:"padron",suc});D.pad[suc]=j.personas;REINICIO[suc]=j.reinicio||"";return j.borrador;}
 let CARGANDO=false;
 async function abrirSucursal(s){CARGANDO=true;pantalla(`<p class="soft">Cargando la lista de personas de <b>${esc(s)}</b>…</p>`);
   try{const nube=await cargarPadron(s);let l=null;try{l=JSON.parse(localStorage.getItem(KEY(s))||"null");}catch(e){}
+    /* si el administrador reinició la sucursal desde la hoja, se descarta lo guardado antes de esa fecha */
+    if(REINICIO[s]&&l&&(l.savedAt||"")<REINICIO[s]){l=null;try{localStorage.removeItem(KEY(s));}catch(e){}}
     if(nube&&nube.suc===s&&(!l||(nube.savedAt||"")>(l.savedAt||"")))l=nube;
     S=migrate((l&&l.suc===s)?l:fresh(s));S.step=S.step||1;
     try{localStorage.setItem(KEY(S.suc),JSON.stringify(S));localStorage.setItem("cuest-gerentes-v5:last",S.suc);}catch(e){}
