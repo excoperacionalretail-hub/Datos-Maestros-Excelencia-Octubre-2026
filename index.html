@@ -453,6 +453,8 @@ function issues(){
   const noT=S.local.cajas.filter(r=>numOf(r)&&!r.t).length;if(noT)out.push(`Hay ${noT} ${noT===1?"caja sin tipo":"cajas sin tipo"}: elegí si es Línea de caja, Mediterráneo, etc. (paso 1)`);
   return out;
 }
+/* Puntos que impiden enviar (los avisos de "sector marcado sin personas" se pueden enviar igual) */
+function issuesDuros(){return issues().filter(t=>!/^No marcaste "|^Marcaste "/.test(t));}
 function resumenDotacion(){const g={},orden=[];let sin=0,act=0,pt=0;
   peopleOf().forEach(p=>{const x=P(p.ced);if(x.baja)return;act++;if(x.jor==="PT")pt++;
     const otro=x.div==="Otro",d=x.div,a=otro?(x.oa||"").trim():x.sec,n=otro?(x.oc||"").trim():(x.niv&&x.niv!=="N/A"?x.niv:"");
@@ -472,7 +474,7 @@ function vReview(){const all=peopleOf(),cnt={ok:0,pend:0,baja:0};all.forEach(p=>
   <div class="card"><b>Enviar respuestas</b>
   <p class="small soft" style="margin:4px 0 10px">Tocá <b>Enviar</b> y tus respuestas quedan registradas. Si después corregís algo, podés volver a enviar: vale el último envío.</p>
   ${sendAsk?`<p class="cjs warn0">Hay ${issues().length} ${issues().length===1?"punto":"puntos"} sin resolver (mirá la lista de arriba). ¿Enviar igual? <span class="adds" style="margin-top:6px"><button class="btn small" id="send-yes">Sí, enviar igual</button><button class="btn ghost small" id="send-no">Primero reviso</button></span></p>`:`<label class="small" style="display:flex;gap:10px;align-items:flex-start;margin:4px 0 12px;cursor:pointer"><input type="checkbox" id="confrev" ${confRev?"checked":""} style="width:20px;height:20px;flex:none;margin-top:1px"><span><b>Confirmo que revisé a cada persona y que esta es la dotación actual de mi local.</b></span></label>
-  <div class="export"><button class="btn" id="send" ${confRev?"":"disabled"}>Enviar respuestas</button>${confRev?"":'<span class="small soft">Marcá la confirmación para poder enviar.</span>'}${S.sentAt?`<span class="small soft">✅ Enviado el ${fmtDate(S.sentAt)}. Si corregiste algo, enviá de nuevo.</span>`:''}</div>`}
+  <div class="export"><button class="btn" id="send" ${confRev&&!issuesDuros().length&&!cerradoAhora()?"":"disabled"}>Enviar respuestas</button>${cerradoAhora()?'<span class="small flag">El cuestionario está cerrado.</span>':issuesDuros().length?`<span class="small" style="color:var(--bad);font-weight:600">Para enviar, primero resolvé ${issuesDuros().length===1?"el punto pendiente":`los ${issuesDuros().length} puntos pendientes`} de la lista de arriba.</span>`:confRev?"":'<span class="small soft">Marcá la confirmación para poder enviar.</span>'}${S.sentAt?`<span class="small soft">✅ Enviado el ${fmtDate(S.sentAt)}. Si corregiste algo, enviá de nuevo.</span>`:''}</div>`}
   <p class="msg" id="xmsg"></p>
   <details class="more"><summary>Más opciones</summary><div class="export" style="margin-top:8px"><button class="btn ghost small" id="dlj">Descargar archivo de respuestas</button><button class="btn ghost small" id="dlx">Descargar en Excel</button>${API_URL?"":`<button class="btn ghost small" id="dlc">Guardar copia con mis respuestas</button>`}</div></details></div>`;
 }
@@ -496,7 +498,7 @@ function render(){
   $("root").className=ORG?"wide":"";
   $("root").innerHTML=`<h1>Confirmá tu local</h1><p class="soft small">${S?esc(S.suc)+(S.locked?'':' · <button class="lnk" id="chg">Cambiar sucursal</button>'):'Retail SA · Cuestionario para gerentes'} · <button class="lnk" id="orgb">${ORG?'Cerrar organigrama':'Ver organigrama'}</button></p>
   ${S&&S.sentAt&&!ORG?`<p class="cjs good0" style="margin:0 0 12px">✅ Ya enviaste este cuestionario el <b>${fmtDate(S.sentAt)}</b>. Podés revisarlo o corregirlo y volver a enviar: vale el último envío.</p>`:""}
-  <div class="steps">${[0,1,2,3,4].map(i=>`<div class="${i<=st?'on':''}"></div>`).join("")}</div><p class="steplbl">${LABELS[st]}</p>
+  <div class="steps">${[0,1,2,3,4].map(i=>`<div class="${i<=st?'on':''}"></div>`).join("")}</div><p class="steplbl">${LABELS[st]}</p>${(S?cerradoAhora():CERRADO_G)?`<p class="flag" style="margin:0 0 14px">🔒 El cuestionario está cerrado. ${S?"Podés ver tus respuestas, pero los cambios ya no se guardan.":"Ya no se reciben respuestas."} Si necesitás corregir algo, avisale a quien te mandó el link.</p>`:""}
   ${S&&!ORG?(resetAsk?`<div class="cjs warn0" style="margin:0 0 14px"><b>¿Borrar todo y empezar de nuevo?</b> Se borran todas las respuestas de ${esc(S.suc)}: horario, cajas, sectores y la clasificación de cada persona. No se puede deshacer.<span class="adds" style="margin-top:8px"><button class="btn small" id="rst-yes" style="background:var(--bad);border-color:var(--bad)">Sí, borrar todo</button><button class="btn ghost small" id="rst-no">No, volver</button></span></div>`:`<p class="small" style="margin:-8px 0 14px;text-align:right"><button class="lnk" id="rst" style="color:var(--bad)">Borrar selección y empezar nuevamente</button></p>`):""}
   <div id="view">${ORG?vOrg():(!S?vSuc():[null,vLocal,vSect,vPeople,vReview][st]())}</div>`;
   $("back").style.visibility=(!S||st===1||ORG)?"hidden":"visible";
@@ -570,8 +572,8 @@ function bind(){
     if(!/^\d{5,9}$/.test(ced)){e.textContent="Ingresá la cédula, solo números.";return;}if(nom.length<3){e.textContent="Ingresá apellido y nombre.";return;}
     if(peopleOf().some(p=>p.ced===ced)){e.textContent="Esa cédula ya está en la lista.";return;}S.added.push({ced,nombre:nom});P(ced);keep();};
   const cr=$("confrev");if(cr)cr.onchange=()=>{confRev=cr.checked;keep();};
-  const sb=$("send");if(sb)sb.onclick=()=>{if(!confRev)return;if(issues().length){sendAsk=true;keep();window.scrollTo(0,document.body.scrollHeight);}else sendAnswers();};
-  const sy=$("send-yes");if(sy)sy.onclick=()=>{sendAsk=false;if(confRev)sendAnswers();};const sn=$("send-no");if(sn)sn.onclick=()=>{sendAsk=false;keep();window.scrollTo(0,0);};const dj=$("dlj");if(dj)dj.onclick=()=>{S.savedAt=new Date().toISOString();save();downloadFile(JSON.stringify(payload()),fileName(),"application/json","xmsg");};
+  const sb=$("send");if(sb)sb.onclick=()=>{if(!confRev||issuesDuros().length||cerradoAhora())return;if(issues().length){sendAsk=true;keep();window.scrollTo(0,document.body.scrollHeight);}else sendAnswers();};
+  const sy=$("send-yes");if(sy)sy.onclick=()=>{sendAsk=false;if(confRev&&!issuesDuros().length&&!cerradoAhora())sendAnswers();};const sn=$("send-no");if(sn)sn.onclick=()=>{sendAsk=false;keep();window.scrollTo(0,0);};const dj=$("dlj");if(dj)dj.onclick=()=>{S.savedAt=new Date().toISOString();save();downloadFile(JSON.stringify(payload()),fileName(),"application/json","xmsg");};
   const dx=$("dlx");if(dx)dx.onclick=exportXLSX;const dc=$("dlc");if(dc)dc.onclick=()=>downloadFile(buildDoc(),"Cuestionario_"+slug(S.suc)+"_con_respuestas.html","text/html","xmsg");
 }
 $("back").onclick=()=>{confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step>1){S.step--;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
@@ -624,8 +626,9 @@ async function api(met,datos){if(!API_URL)throw new Error("falta configurar API_
   const r=met==="GET"?await fetch(API_URL+"?"+new URLSearchParams(datos),{cache:"no-store"}):await fetch(API_URL,{method:"POST",body:JSON.stringify(datos)});
   const j=await r.json();if(!j.ok)throw new Error(j.error||"error del servidor");return j;}
 function pantalla(html){$("root").innerHTML=`<h1>Confirmá tu local</h1><div id="view">${html}</div>`;$("back").style.visibility="hidden";$("next").style.display="none";}
-const REINICIO={};
-async function cargarPadron(suc){const j=await api("GET",{accion:"padron",suc});D.pad[suc]=j.personas;REINICIO[suc]=j.reinicio||"";return j.borrador;}
+const REINICIO={},CERR={};let CERRADO_G=false;
+function cerradoAhora(){return !!(S&&CERR[S.suc]);}
+async function cargarPadron(suc){const j=await api("GET",{accion:"padron",suc});D.pad[suc]=j.personas;REINICIO[suc]=j.reinicio||"";CERR[suc]=!!j.cerrado;return j.borrador;}
 let CARGANDO=false;
 async function abrirSucursal(s){CARGANDO=true;pantalla(`<p class="soft">Cargando la lista de personas de <b>${esc(s)}</b>…</p>`);
   try{const nube=await cargarPadron(s);let l=null;try{l=JSON.parse(localStorage.getItem(KEY(s))||"null");}catch(e){}
@@ -638,17 +641,17 @@ async function abrirSucursal(s){CARGANDO=true;pantalla(`<p class="soft">Cargando
   catch(e){S=null;CARGANDO=false;pantalla(`<p class="flag">No pude cargar la lista de tu sucursal (${esc(e.message||"sin conexión")}). Revisá tu conexión a internet y, si sigue, avisale a quien te mandó el link.</p><div class="export"><button class="btn" id="reint">Reintentar</button><button class="btn ghost" id="volver">Elegir otra sucursal</button></div>`);
     $("reint").onclick=()=>abrirSucursal(s);$("volver").onclick=()=>render();}}
 let tNube=null,nubePend=false;
-function programarNube(){if(!S||!API_URL)return;setSave("Guardando…");clearTimeout(tNube);tNube=setTimeout(subirBorrador,4000);}
+function programarNube(){if(!S||!API_URL)return;if(cerradoAhora()){setSave("Cuestionario cerrado: los cambios no se guardan");return;}setSave("Guardando…");clearTimeout(tNube);tNube=setTimeout(subirBorrador,4000);}
 async function subirBorrador(){if(!S)return;if(nubePend){programarNube();return;}nubePend=true;const suc=S.suc;
   try{let res=null;try{res=payload().resumen;}catch(e){}await api("POST",{accion:"borrador",suc,estado:S,resumen:res});if(S&&S.suc===suc)setSave("Guardado ✓");}
-  catch(e){setSave("Sin conexión: guardado solo en este dispositivo");}finally{nubePend=false;}}
+  catch(e){if(/cerrado/.test(e.message||"")){if(S)CERR[S.suc]=true;setSave("Cuestionario cerrado: los cambios no se guardan");}else setSave("Sin conexión: guardado solo en este dispositivo");}finally{nubePend=false;}}
 window.addEventListener("pagehide",()=>{if(tNube&&S&&API_URL){clearTimeout(tNube);try{navigator.sendBeacon(API_URL,new Blob([JSON.stringify({accion:"borrador",suc:S.suc,estado:S})],{type:"text/plain"}));}catch(e){}}});
 let ESTADOS={};
 function badgeSuc(s){const e=ESTADOS[(s||"").replace(/\s+/g," ").trim().toUpperCase()];if(!e||!e[0]||e[0]==="Sin empezar")return "";
   return e[0]==="Enviado"?` <span class="pill ok" style="margin-left:6px">✅ Enviado${e[1]?" el "+fmtDate(e[1]):""}</span>`:` <span class="pill pend" style="margin-left:6px">✏️ En curso</span>`;}
 async function iniciar(){if(!API_URL){pantalla('<p class="flag">Falta configurar la dirección del servidor (API_URL) en este archivo.</p>');return;}
   S=null;render();
-  try{const j=await api("GET",{accion:"estados"});ESTADOS=j.estados||{};if(!S&&!CARGANDO)render();}catch(e){}}
+  try{const j=await api("GET",{accion:"estados"});ESTADOS=j.estados||{};CERRADO_G=!!j.cerrado;if(!S&&!CARGANDO)render();}catch(e){}}
 iniciar();
 </script>
 </body>
