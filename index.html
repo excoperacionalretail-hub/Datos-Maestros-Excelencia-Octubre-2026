@@ -68,7 +68,12 @@ button.btn.gray{background:transparent;color:var(--ink);border-color:var(--line)
 .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
 .bar input[type=search]{flex:1;min-width:180px}
 .pill{font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--soft);white-space:nowrap}
-.pill.ok{background:var(--acc-soft);color:var(--acc)}.pill.pend{background:var(--amber-soft);color:var(--amber)}.pill.baja{background:var(--off-soft);color:var(--soft)}
+.pill.ok{background:var(--acc-soft);color:var(--acc)}.pill.pend{background:var(--amber-soft);color:var(--amber)}
+.person.pendc{border-left:5px solid var(--amber)}
+.person.flash{animation:flash 2.2s ease-out}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
+.gopend{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--amber);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;max-width:calc(100% - 24px);white-space:nowrap}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(128px + env(safe-area-inset-bottom,0px));z-index:21;background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 14px;font-size:14px;max-width:calc(100% - 24px);box-shadow:0 4px 14px rgba(0,0,0,.25)}.pill.baja{background:var(--off-soft);color:var(--soft)}
 .person{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 8px}
 .person.baja{background:var(--off-soft)}
 .person.baja .who span:first-child{text-decoration:line-through;color:var(--soft)}
@@ -253,8 +258,8 @@ const SECT=[
 ];
 const UNIF_A="Mediterráneo",UNIF_B="Patio de comida";
 const unifOn=()=>S.sect[UNIF_A].on&&S.sect[UNIF_B].on;
-const CAJAS=[["linea","Línea de caja"],["medit","Mediterráneo"],["canasta","La Canasta"],["parrilla","Parrillada"],["sco","Self-checkout"]];
-const CCOL={linea:"var(--acc)",medit:"var(--blue)",canasta:"var(--amber)",parrilla:"var(--bad)",sco:"var(--purple)"},XCOL=["var(--teal)","var(--pink)","var(--olive)"];
+const CAJAS=[["linea","Línea de caja"],["medit","Mediterráneo"],["canasta","La Canasta"],["parrilla","Parrillada"],["ecom","E-commerce/Online"],["sco","Self-checkout"]];
+const CCOL={linea:"var(--acc)",medit:"var(--blue)",canasta:"var(--amber)",parrilla:"var(--bad)",ecom:"var(--olive)",sco:"var(--purple)"},XCOL=["var(--teal)","var(--pink)","var(--olive)"];
 let confRev=false,resetAsk=false,addingType=false,qBackup=null,clearAsk=false,sendAsk=false;
 function numsOf(txt){const out=[];String(txt||"").split(/[,;]|\s+y\s+/).forEach(t=>{t=t.trim();if(!t)return;const m=t.match(/^(\d+)\s*(?:a|-|al|hasta)\s*(\d+)$/i);if(m){for(let i=+m[1];i<=+m[2]&&out.length<400;i++)out.push(i);}else if(/^\d+$/.test(t))out.push(+t);});return out;}
 const numOf=r=>{const n=parseInt(r.n,10);return n>0?n:null;};
@@ -367,10 +372,10 @@ function cajasCard(){const L=S.local,list=L.cajas,types=cajaTypes(),dups=new Set
     return `<div class="crow ${bad?"bad":(r.t?"":"pend")}"><input type="number" min="1" max="9999" value="${esc(r.n)}" data-cn="${i}" placeholder="Nº" aria-label="Número de caja"><i class="dot" style="--c:${r.t?typeColor(r.t):"transparent"}"></i><select data-ct="${i}" aria-label="Tipo de caja">${opts(r.t)}</select><button class="ib del" data-crm="${i}" aria-label="Quitar esta caja">×</button>${bad?`<span class="cerr">${bad}</span>`:""}</div>`;}).join("");
   return `<h3>Cajas del local</h3>
   <div class="card">
-    <p class="small" style="margin:0 0 12px">Necesitamos dos datos: <b>cuántas cajas</b> tiene el local y <b>qué número tiene cada una</b>, con su tipo (Línea de caja, Mediterráneo, Self-checkout, etc.). Primero poné la cantidad; después completá el número y el tipo de cada caja.</p>
-    <div class="field"><span class="lbl">¿Cuántas cajas tiene el local?<span class="hint">Contá todas, incluidas las de self-checkout</span></span><span class="qty"><button class="qb" data-qd="-1" aria-label="Una caja menos" ${list.length?"":"disabled"}>−</button><input type="number" inputmode="numeric" min="0" max="400" value="${list.length||""}" data-cq placeholder="0" aria-label="Cantidad de cajas"><button class="qb" data-qd="1" aria-label="Una caja más">+</button></span></div>
+    <p class="small" style="margin:0 0 12px">Necesitamos dos datos: <b>cuántas cajas físicas</b> tiene el local y <b>qué número tiene cada una</b>, con su tipo. Primero poné la cantidad; después completá el número y el tipo de cada caja.</p><p class="cjs warn0" style="margin:0 0 12px"><b>Contá TODAS las cajas que existen físicamente en el local, aunque hoy no estén habilitadas o no se usen.</b> Es decir, todas las cajas que se podrían usar, de <b>todos los sectores</b>: línea de caja, Mediterráneo, La Canasta, Parrillada, E-commerce/Online y self-checkout.</p>
+    <div class="field"><span class="lbl">¿Cuántas cajas físicas hay en el local, en total?<span class="hint">Habilitadas o no, de todos los sectores, incluidas las de self-checkout</span></span><span class="qty"><button class="qb" data-qd="-1" aria-label="Una caja menos" ${list.length?"":"disabled"}>−</button><input type="number" inputmode="numeric" min="0" max="400" value="${list.length||""}" data-cq placeholder="0" aria-label="Cantidad de cajas"><button class="qb" data-qd="1" aria-label="Una caja más">+</button></span></div>
     ${qBackup?`<p class="small soft" style="margin:6px 0 0">Se ${qBackup.rows.length===1?"quitó 1 caja":`quitaron ${qBackup.rows.length} cajas`} (nº ${qBackup.rows.map(r=>r.n||"?").join(", ")}). <button class="lnk" id="qundo">Deshacer</button></p>`:""}
-    ${list.length?`<p class="small soft" style="margin:12px 0 8px">Ahora completá cada caja: el <b>número</b> que tiene y de qué <b>tipo</b> es. No hace falta que sean seguidas ni del mismo tipo: puede ser la 1 Mediterráneo, la 2 Parrillada, la 3 Línea de caja, y así.</p>
+    ${list.length?`<p class="small soft" style="margin:12px 0 8px">Ahora completá cada caja: el <b>número</b> que tiene (el que figura en la caja) y de qué <b>tipo</b> es. No hace falta que sean seguidas ni del mismo tipo: puede ser la 1 Mediterráneo, la 2 Parrillada, la 3 Línea de caja, y así.</p>
     <div class="clist">${rows}</div>
     ${blank?`<p class="small" style="margin:8px 0 0"><button class="lnk" id="cfill">Poner «Línea de caja» en ${blank===1?"la que falta":`las ${blank} que faltan`}</button></p>`:""}
     <div class="export" style="margin:10px 0 4px"><button class="btn ghost small" id="cadd1">Agregar una caja más</button></div>
@@ -412,7 +417,7 @@ function vPeople(){
   const pcard=p=>{const x=P(p.ced),st=estado(p.ced),z=ZONA(x.niv,x.sec);
     const opt=(arr,cur)=>`<option value="">Elegí…</option>`+arr.map(v=>`<option ${cur===v?'selected':''}>${esc(v)}</option>`).join("");
     const sg=p.added?null:suggest(p.ref);
-    return `<div class="person ${x.baja?'baja':''}" data-pc="${p.ced}"><div class="who"><span><b>${esc(p.nombre)}</b> <span class="soft small">· CI ${esc(p.ver||p.ced)}</span></span><span class="who-r"><span class="pill ${st}">${st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá"}</span><button class="lnk" data-baja="${p.ced}">${x.baja?'Deshacer':'Ya no trabaja acá'}</button></span></div>
+    return `<div class="person ${x.baja?'baja':''} ${st==="pend"?'pendc':''}" data-pc="${p.ced}"><div class="who"><span><b>${esc(p.nombre)}</b> <span class="soft small">· CI ${esc(p.ver||p.ced)}</span></span><span class="who-r"><span class="pill ${st}">${st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá"}</span><button class="lnk" data-baja="${p.ced}">${x.baja?'Deshacer':'Ya no trabaja acá'}</button></span></div>
     <div class="ref"><span>Hoy figura como: <b>${esc(p.ref)}</b>${x.baja?'<span class="hint">Marcada como baja: no hace falta completar nada más.</span>':st==="ok"?'':sg?`<span class="hint">Se clasificaría como: ${esc(sugTxt(sg))}</span>`:(p.added?'':'<span class="hint">No hay clasificación sugerida: elegila abajo, o elegí «Otro» en División si el puesto no está en el organigrama</span>')}${!x.baja&&st!=="ok"&&x.acc?'<span class="hint">Sugerencia aplicada: completá lo que falta abajo</span>':''}</span>
       ${p.added?'<button class="btn ghost small" data-rmadd="'+p.ced+'">Quitar</button>':''}${x.baja?'<span class="pill baja">Baja confirmada ✓</span>':st==="ok"?`<span class="pill ok">${x.acc?"Confirmado ✓":"Completo ✓"}</span>`:(sg&&!x.acc&&!p.added?`<button class="btn small" data-acc="${p.ced}">Sí, es correcto</button>`:'')}</div>
     <div class="sel">
@@ -560,10 +565,10 @@ function bind(){
   document.querySelectorAll("[data-z]").forEach(c=>c.onchange=()=>{const p=P(c.dataset.ced),v=c.dataset.z;if(c.checked){if(!p.zona.includes(v))p.zona.push(v);}else p.zona=p.zona.filter(x=>x!==v);keep();});
   document.querySelectorAll("[data-o]").forEach(i=>{const ced=i.dataset.ced,f=i.dataset.o,base=f==="oa"?"Área / sector":"Cargo";
     const upd=()=>{const ok=!!i.value.trim(),l=i.closest("label");l.firstChild.nodeValue=base+(ok?"":" · falta completar");l.style.color=ok?"":"var(--bad)";l.style.fontWeight=ok?"":"600";
-      const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}};
+      const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}const pcd=document.querySelector(`[data-pc="${CSS.escape(ced)}"]`);if(pcd)pcd.classList.toggle("pendc",st==="pend");actualizarGoPend();};
     i.oninput=()=>{P(ced)[f]=i.value;P(ced).acc=false;upd();};i.onchange=()=>{P(ced)[f]=i.value.trim();upd();save();};});
   document.querySelectorAll("[data-obs]").forEach(i=>{const ced=i.dataset.obs;
-    const upd=()=>{const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}
+    const upd=()=>{const st=estado(ced),pc=document.querySelector(`[data-pc="${CSS.escape(ced)}"] .who .pill`);if(pc){pc.className="pill "+st;pc.textContent=st==="ok"?"Completo":st==="pend"?"Pendiente":"Ya no trabaja acá";}const pcd=document.querySelector(`[data-pc="${CSS.escape(ced)}"]`);if(pcd)pcd.classList.toggle("pendc",st==="pend");actualizarGoPend();
       };
     i.oninput=()=>{P(ced).obs=i.value;upd();};i.onchange=()=>{P(ced).obs=i.value.trim();upd();save();};});
   document.querySelectorAll("[data-baja]").forEach(b=>b.onclick=()=>{const p=P(b.dataset.baja);p.baja=!p.baja;keep();});
@@ -577,7 +582,25 @@ function bind(){
   const dx=$("dlx");if(dx)dx.onclick=exportXLSX;const dc=$("dlc");if(dc)dc.onclick=()=>downloadFile(buildDoc(),"Cuestionario_"+slug(S.suc)+"_con_respuestas.html","text/html","xmsg");
 }
 $("back").onclick=()=>{confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step>1){S.step--;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
-$("next").onclick=()=>{confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step<4){S.step++;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
+/* ===== Ir a la próxima persona pendiente ===== */
+function cardsPend(){return [...document.querySelectorAll("[data-pc]")].filter(el=>estado(el.dataset.pc)==="pend");}
+function toast(t){let e=document.getElementById("toast");if(!e){e=document.createElement("div");e.id="toast";e.className="toast";document.body.appendChild(e);}e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>{e.style.display="none";},3500);}
+function irAPendiente(primera){let cs=cardsPend();
+  if(!cs.length&&onlyPend===false&&peopleOf().some(p=>estado(p.ced)==="pend")){peopleFilter="";render();cs=cardsPend();}
+  if(!cs.length)return;const y=window.innerHeight*0.35;
+  const sig=primera?cs[0]:(cs.find(el=>el.getBoundingClientRect().top>y+5)||cs[0]);
+  sig.scrollIntoView({behavior:"smooth",block:"center"});sig.classList.remove("flash");void sig.offsetWidth;sig.classList.add("flash");}
+function actualizarGoPend(){let b=document.getElementById("gopend");
+  const n=S&&S.step===3?peopleOf().filter(p=>estado(p.ced)==="pend").length:0;
+  if(!n){if(b)b.remove();return;}
+  if(!b){b=document.createElement("button");b.id="gopend";b.className="gopend";b.onclick=()=>irAPendiente(false);document.body.appendChild(b);}
+  const cs=cardsPend(),y=window.innerHeight*0.35,abajo=cs.some(el=>el.getBoundingClientRect().top>y+5);
+  b.textContent=`⚠️ ${n===1?"Falta 1 persona":`Faltan ${n} personas`} · Ir a la ${abajo?"siguiente ↓":"primera ↑"}`;}
+{const _r=render;render=function(){_r();actualizarGoPend();};}
+window.addEventListener("scroll",()=>{if(S&&S.step===3){clearTimeout(window._gp);window._gp=setTimeout(actualizarGoPend,120);}},{passive:true});
+$("next").onclick=()=>{if(S&&S.step===3){const n=peopleOf().filter(p=>estado(p.ced)==="pend").length;
+    if(n){toast(`Te ${n===1?"falta completar 1 persona":`faltan completar ${n} personas`}. Te llevo a ${n===1?"ella":"la primera"}.`);irAPendiente(true);return;}}
+  confRev=false;resetAsk=false;qBackup=null;clearAsk=false;sendAsk=false;if(S&&S.step<4){S.step++;save();clearTimeout(tNube);subirBorrador();render();window.scrollTo(0,0);}};
 
 /* ===== Exportar ===== */
 const slug=s=>s.replace(/[^\w\dáéíóúñÁÉÍÓÚÑ]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40);
